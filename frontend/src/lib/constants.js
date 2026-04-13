@@ -6,9 +6,9 @@ export const IMAGES = {
   service2: "/assets/landing/service-interior.png",
   service3: "/assets/landing/service-premium.png",
   whyUs: "/assets/landing/service-domicilio.png",
-  paquete1: "/assets/landing/banner-clean.png",
-  paquete2: "/assets/landing/banner-detail.png",
-  paquete3: "/assets/landing/banner-deep.png",
+  paquete1: "/assets/landing/package-exterior.png",
+  paquete2: "/assets/landing/package-interior.png",
+  paquete3: "/assets/landing/package-premium.png",
   extras: "/assets/landing/banner-extras.png",
   compareBefore: "/assets/landing/compare-before.png",
   compareAfter: "/assets/landing/compare-after.png",
@@ -62,7 +62,7 @@ export const PACKAGES = [
     subtitle: 'Limpieza esencial bien hecha',
     color: '#25D366',
     image: IMAGES.paquete1,
-    altText: "Banner Paquete Street Clean - Limpieza Detallada Esencial para Autos de Uso Diario",
+    altText: "Lavado Exterior Profesional - Limpieza a detalle de rines y llantas con productos Armor All",
     prices: {
       auto_chico: 499, auto_mediano: 549, auto_grande: 599,
       suv_chica: 649, suv_grande: 699, camioneta_larga: 799, camioneta_extra: 899
@@ -75,7 +75,7 @@ export const PACKAGES = [
     subtitle: 'Limpieza superior y detallado',
     color: '#FFB800',
     image: IMAGES.paquete2,
-    altText: "Banner Paquete Street Detail - Pulido y Encerado Profesional de Carrocería Automotriz",
+    altText: "Limpieza Interior Profunda - Cuidado y protección de vestiduras de piel con tecnología Armor All",
     prices: {
       auto_chico: 899, auto_mediano: 999, auto_grande: 1099,
       suv_chica: 1199, suv_grande: 1299, camioneta_larga: 1499, camioneta_extra: 1699
@@ -88,7 +88,7 @@ export const PACKAGES = [
     subtitle: 'Detailing completo profesional',
     color: '#1F6AE1',
     image: IMAGES.paquete3,
-    altText: "Banner Paquete Street Deep - Detallado Automotriz Completo y Protección Cerámica de Alta Gama",
+    altText: "Detallado Automotriz Premium - Corrección de pintura y protección cerámica profesional para vehículos de alta gama",
     prices: {
       auto_chico: 1799, auto_mediano: 1999, auto_grande: 2199,
       suv_chica: 2399, suv_grande: 2699, camioneta_larga: 2999, camioneta_extra: 3399
