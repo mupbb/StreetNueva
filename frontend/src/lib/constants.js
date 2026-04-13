@@ -1,7 +1,7 @@
 // Assets
 export const IMAGES = {
   logo: "/assets/landing/logo-official.png",
-  hero: "/assets/landing/hero-bg.png",
+  hero: "/assets/landing/hero-escalade.png",
   service1: "/assets/landing/service-exterior.png",
   service2: "/assets/landing/service-interior.png",
   service3: "/assets/landing/service-premium.png",

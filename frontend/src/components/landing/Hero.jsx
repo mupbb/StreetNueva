@@ -31,15 +31,14 @@ export const Hero = () => {
             </p>
           </motion.div>
           
-          <motion.h1 variants={fadeInUp} className="text-5xl sm:text-6xl lg:text-8xl font-extrabold text-white leading-[0.9] mb-8">
-            EL DETALLADO <br />
-            <span className="text-[#1F6AE1]">QUE TU AUTO</span> <br />
-            MERECE.
+          <motion.h1 variants={fadeInUp} className="text-5xl sm:text-6xl lg:text-8xl font-extrabold text-white leading-[0.9] mb-8 uppercase">
+            DETALLADO DE AUTOS <br />
+            A DOMICILIO <br />
+            <span className="text-[#1F6AE1]">EN CDMX</span>
           </motion.h1>
           
           <motion.p variants={fadeInUp} className="text-base md:text-lg text-[#C9CDD3] mb-10 max-w-xl font-medium leading-relaxed">
-            Limpieza profesional, puntual y 100% a domicilio. 
-            Devolvemos el brillo original a tu vehículo sin que salgas de casa.
+            Limpieza profesional, puntual y sin que salgas de casa. Tu auto como nuevo, donde estés.
           </motion.p>
           
           <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row items-center gap-6">
