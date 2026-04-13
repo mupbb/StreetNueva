@@ -1,0 +1,133 @@
+{
+  "project_name": "Street Prime Detail",
+  "design_philosophy": {
+    "persona": "E1 - The Anti-AI Designer",
+    "theme": "The Night Garage - Premium, Cinematic, Wet-Look",
+    "core_values": [
+      "Fusion: Automotive Precision x Cyberpunk Noir",
+      "Emotion: The satisfaction of a brand new car",
+      "Depth: Glassmorphism and lighting over flat colors"
+    ]
+  },
+  "typography": {
+    "font_family": {
+      "heading": "Barlow Condensed, sans-serif",
+      "body": "Manrope, sans-serif"
+    },
+    "weights": {
+      "heading": "700 (Bold) or 800 (ExtraBold)",
+      "body": "400 (Regular) and 500 (Medium)"
+    },
+    "scale": {
+      "h1": "text-5xl md:text-7xl tracking-tighter uppercase",
+      "h2": "text-3xl md:text-5xl tracking-tight uppercase",
+      "h3": "text-xl md:text-2xl font-bold uppercase tracking-wide",
+      "body": "text-base md:text-lg leading-relaxed text-gray-300"
+    },
+    "import_url": "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Manrope:wght@300;400;500;700&display=swap"
+  },
+  "colors": {
+    "palette": {
+      "background": "#0B0D10",
+      "surface": "#0F2A44",
+      "primary": "#1F6AE1",
+      "secondary": "#C9CDD3",
+      "text_primary": "#FFFFFF",
+      "text_secondary": "#94A3B8",
+      "accent_glow": "rgba(31, 106, 225, 0.5)"
+    },
+    "usage": {
+      "body_bg": "bg-[#0B0D10]",
+      "card_bg": "bg-[#0F2A44]/40 backdrop-blur-md border border-white/10",
+      "primary_button": "bg-[#1F6AE1] hover:bg-[#1F6AE1]/90 text-white shadow-[0_0_20px_rgba(31,106,225,0.4)]",
+      "text_gradient": "bg-clip-text text-transparent bg-gradient-to-r from-white via-[#C9CDD3] to-gray-400"
+    }
+  },
+  "layout": {
+    "grid_system": "Bento Grid (Asymmetric)",
+    "spacing": {
+      "section_padding": "py-20 md:py-32",
+      "container_padding": "px-6 md:px-12"
+    },
+    "container_max_width": "max-w-7xl mx-auto"
+  },
+  "components": {
+    "buttons": {
+      "primary": "rounded-full px-8 py-4 font-bold uppercase tracking-wider transition-all duration-300 hover:scale-105 active:scale-95",
+      "whatsapp_float": "fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-[0_0_30px_rgba(37,211,102,0.4)] hover:scale-110 transition-transform animate-pulse"
+    },
+    "cards": {
+      "service_card": "group relative overflow-hidden rounded-2xl bg-[#0F2A44]/20 border border-white/5 hover:border-[#1F6AE1]/50 transition-colors duration-500",
+      "glass_panel": "bg-black/40 backdrop-blur-xl border border-white/10 rounded-3xl"
+    }
+  },
+  "assets": {
+    "images": {
+      "hero_bg": "https://customer-assets.emergentagent.com/job_auto-detail/artifacts/vryh810h_BANNER%201.png",
+      "service_1": "https://customer-assets.emergentagent.com/job_auto-detail/artifacts/ybglelye_BANNER%202.png",
+      "service_2": "https://customer-assets.emergentagent.com/job_auto-detail/artifacts/gvuq2fxi_BANNER%203.png",
+      "service_3": "https://customer-assets.emergentagent.com/job_auto-detail/artifacts/zwfi04zd_BANNER%204.png",
+      "why_us_bg": "https://customer-assets.emergentagent.com/job_auto-detail/artifacts/5zxowoad_BANNER%205.png"
+    },
+    "icons": {
+      "library": "lucide-react",
+      "style": "Stroke width 1.5px, color #1F6AE1"
+    }
+  },
+  "content": {
+    "contact_info": {
+      "whatsapp": "55 7250 2791",
+      "address": "Prol. San Diego 110B, San Bartolo Ameyalco, Álvaro Obregón, CDMX",
+      "hours": "Abre a las 10:00 a.m."
+    },
+    "seo": {
+      "title": "Street Prime Detail | Detallado Automotriz a Domicilio CDMX",
+      "description": "Servicio premium de detallado de autos a domicilio en Álvaro Obregón y CDMX. Lavado, encerado y estética automotriz profesional."
+    }
+  },
+  "motion": {
+    "library": "framer-motion",
+    "scroll": "lenis",
+    "animations": {
+      "fade_up": {
+        "initial": { "opacity": 0, "y": 40 },
+        "whileInView": { "opacity": 1, "y": 0 },
+        "viewport": { "once": true },
+        "transition": { "duration": 0.8, "ease": "easeOut" }
+      },
+      "stagger_children": {
+        "visible": { "transition": { "staggerChildren": 0.1 } }
+      }
+    }
+  },
+  "instructions_to_main_agent": [
+    "1. SETUP: Install 'framer-motion', 'lucide-react', 'clsx', 'tailwind-merge' immediately.",
+    "2. FONTS: Add the Google Fonts import to index.css immediately.",
+    "3. HERO: Use 'Banner 1' as a full-screen background with a heavy gradient overlay (to black at the bottom). Text should be bottom-left aligned.",
+    "4. SERVICES: Create a Bento Grid. Do not use simple equal cards. Make the 'Paquete Premium' card span 2 columns.",
+    "5. WHATSAPP: The floating button is CRITICAL. It must be visible on all screens.",
+    "6. MAP: Create a 'Radar' style visualization using CSS circles and a scanning animation to represent the 'Zona de Cobertura' (Álvaro Obregón). Do not use a real Google Map embed unless necessary, a stylized CSS map looks more premium.",
+    "7. FOOTER: Must include the full address and SEO keywords in small text.",
+    "8. ACCESSIBILITY: Ensure the Blue text on Black background has sufficient contrast. Use lighter shades of blue for text if needed."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy",
+    "Use glass-morphism effects with backdrop filters (12-24px blur)",
+    "You MUST NOT apply universal transition. Eg: transition: all. This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms",
+    "You MUST NOT center align the app container, ie do not add .App { text-align: center; } in the css file. This disrupts the human natural reading flow of text",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
+    "Subtle grain textures, noise overlays, custom cursors, selection states, and loading animations: separates good from extraordinary.",
+    "Main agent relies on these image URLs. Missing categories (especially sponsor logos) = main agent will use placeholder text which is FORBIDDEN",
+    "Prioritize using pre-existing components from src/components/ui when applicable",
+    "Create new components that match the style and conventions of existing components when needed",
+    "Examine existing components to understand the project's component patterns before creating new ones",
+    "Components MUST use named exports (export const ComponentName = ...)",
+    "Pages MUST use default exports (export default function PageName() {...})",
+    "Use sonner for toasts"
+  ]
+}
