@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import { fadeInUp, staggerContainer } from "@/lib/constants";
 import { viewportOnce } from "./shared";
@@ -66,8 +65,8 @@ export const AffiliatedBrands = () => {
   return (
     <section className="py-8 md:py-10 overflow-hidden" data-testid="affiliated-brands-section">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={staggerContainer}>
-          <motion.div variants={fadeInUp} className="text-center mb-8">
+        <div>
+          <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-3">
               <Sparkles className="w-5 h-5 text-[#1F6AE1]" />
               <span className="text-[#1F6AE1] font-semibold tracking-wider text-sm">CALIDAD GARANTIZADA</span>
@@ -76,9 +75,9 @@ export const AffiliatedBrands = () => {
             <h2 className="text-3xl md:text-4xl font-bold text-white">
               Productos <span className="text-[#1F6AE1]">Afiliados</span>
             </h2>
-          </motion.div>
+          </div>
 
-          <motion.div variants={fadeInUp} className="brand-carousel-wrapper">
+          <div className="brand-carousel-wrapper">
             <div className="brand-carousel-track">
               {[...AFFILIATED_BRANDS, ...AFFILIATED_BRANDS, ...AFFILIATED_BRANDS].map((brand, index) => (
                 <div
@@ -92,8 +91,8 @@ export const AffiliatedBrands = () => {
                 </div>
               ))}
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

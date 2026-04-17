@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
 import { MoveHorizontal } from "lucide-react";
 import { IMAGES } from "@/lib/constants";
 

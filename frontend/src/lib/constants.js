@@ -1,36 +1,37 @@
 // Assets
 export const IMAGES = {
   logo: "/assets/landing/logo-official.png",
-  hero: "/assets/landing/hero-escalade.png",
-  service1: "/assets/landing/service-exterior.png",
-  service2: "/assets/landing/service-interior.png",
-  service3: "/assets/landing/service-premium.png",
-  whyUs: "/assets/landing/service-domicilio.png",
+  hero: "/assets/landing/hero-official.png",
+  service1: "/assets/landing/service-exterior.jpg",
+  service2: "/assets/landing/service-interior.jpg",
+  service3: "/assets/landing/service-premium.jpg",
+  whyUs: "/assets/landing/service-domicilio.jpg",
   paquete1: "/assets/landing/package-exterior.png",
   paquete2: "/assets/landing/package-interior.png",
   paquete3: "/assets/landing/package-premium.png",
   extras: "/assets/landing/banner-extras.png",
   compareBefore: "/assets/landing/compare-before.png",
   compareAfter: "/assets/landing/compare-after.png",
-  bitso_qr: "/assets/payments/bitso_qr.png",
-  bybit_qr: "/assets/payments/bybit_qr.png",
-  phantom_qr: "/assets/payments/phantom_qr.png"
+  bitcoin_logo: "/assets/landing/bitcoin-logo.png",
+  bitso_qr: "/assets/payments/bitso.jpg",
+  bybit_qr: "/assets/payments/bybit.jpg",
+  phantom_qr: "/assets/payments/phantom.jpg"
 };
 
 export const PARTNER_BRANDS = [
-  { id: 'meguiars', name: "Meguiar's", logo: "https://logos-world.net/wp-content/uploads/2020/12/Meguiars-Logo.png" },
-  { id: 'armorall', name: "Armor All", logo: "https://www.armorall.com/latinoamerica/wp-content/uploads/sites/4/2022/04/armorall-header-logo.png" },
-  { id: 'turtlewax', name: "Turtle Wax", logo: "https://www.turtlewax.com/cdn/shop/files/TurtleWax_Logo_Black_200x.png" },
-  { id: 'proelite', name: "Pro Elite", logo: "https://pefitmats.mx/wp-content/uploads/2021/04/Logo-ProElite.png" }
+  { id: 'meguiars', name: "Meguiar's", logo: "/assets/brands/meguiars.png" },
+  { id: 'armorall', name: "Armor All", logo: "/assets/brands/armorall.png" },
+  { id: 'turtlewax', name: "Turtle Wax", logo: "/assets/brands/turtlewax.png" },
+  { id: 'proelite', name: "Pro Elite", logo: "/assets/brands/proelite.png" }
 ];
 
 export const SOCIAL_LINKS = [
-  { id: 'facebook', name: 'Facebook', url: 'https://www.facebook.com/share/1DvnZvZDpa/?mibextid=wwXIfr', icon: 'https://upload.wikimedia.org/wikipedia/commons/6/6c/Facebook_Logo_2023.svg' },
-  { id: 'instagram', name: 'Instagram', url: 'https://www.instagram.com/streetprimedetail?igsh=MWZ0aDZoZnJpZTY5dg%3D%3D&utm_source=qr', icon: 'https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg' },
-  { id: 'threads', name: 'Threads', url: 'https://www.threads.com/@streetprimedetail?igshid=NTc4MTIwNjQ2YQ==', icon: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Threads_%28social_network%29_logo.svg' },
-  { id: 'tiktok', name: 'TikTok', url: 'https://www.tiktok.com/@street.prime.detail?_r=1&_t=ZS-95RV8EeA5TA', icon: 'https://upload.wikimedia.org/wikipedia/commons/3/34/TikTok_logo.svg' },
-  { id: 'linkedin', name: 'LinkedIn', url: 'https://www.linkedin.com/company/streetprimedetail/', icon: 'https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg' },
-  { id: 'kick', name: 'Kick', url: 'https://kick.com/streetprimedetail', icon: 'https://upload.wikimedia.org/wikipedia/commons/d/dd/Kick_logo.svg' }
+  { id: 'facebook', name: 'Facebook', url: 'https://www.facebook.com/share/1DvnZvZDpa/?mibextid=wwXIfr' },
+  { id: 'instagram', name: 'Instagram', url: 'https://www.instagram.com/streetprimedetail?igsh=MWZ0aDZoZnJpZTY5dg%3D%3D&utm_source=qr' },
+  { id: 'threads', name: 'Threads', url: 'https://www.threads.com/@streetprimedetail?igshid=NTc4MTIwNjQ2YQ==' },
+  { id: 'tiktok', name: 'TikTok', url: 'https://www.tiktok.com/@street.prime.detail?_r=1&_t=ZS-95RV8EeA5TA' },
+  { id: 'linkedin', name: 'LinkedIn', url: 'https://www.linkedin.com/company/streetprimedetail/' },
+  { id: 'kick', name: 'Kick', url: 'https://kick.com/streetprimedetail' }
 ];
 
 export const CRYPTO = {
@@ -46,13 +47,13 @@ export const GOOGLE_MAPS_REVIEW_LINK = "https://g.page/r/CZnxgf7IqHw1EAI/review"
 
 // Pricing Data
 export const VEHICLE_TYPES = [
-  { id: 'auto_chico', name: 'Auto chico', icon: '🚗' },
-  { id: 'auto_mediano', name: 'Auto mediano', icon: '🚙' },
-  { id: 'auto_grande', name: 'Auto grande', icon: '🚘' },
-  { id: 'suv_chica', name: 'SUV chica', icon: '🚐' },
-  { id: 'suv_grande', name: 'SUV grande', icon: '🚕' },
-  { id: 'camioneta_larga', name: 'Camioneta larga', icon: '🛻' },
-  { id: 'camioneta_extra', name: 'Camioneta extra larga', icon: '🚚' }
+  { id: 'auto_chico', name: 'Auto chico', icon: 'car-sm' },
+  { id: 'auto_mediano', name: 'Auto mediano', icon: 'car-md' },
+  { id: 'auto_grande', name: 'Auto grande', icon: 'car-lg' },
+  { id: 'suv_chica', name: 'SUV chica', icon: 'suv-sm' },
+  { id: 'suv_grande', name: 'SUV grande', icon: 'suv-lg' },
+  { id: 'camioneta_larga', name: 'Camioneta larga', icon: 'truck-lg' },
+  { id: 'camioneta_extra', name: 'Camioneta extra larga', icon: 'truck-xl' }
 ];
 
 export const PACKAGES = [
@@ -99,27 +100,27 @@ export const PACKAGES = [
 
 export const UPSELLS = [
   {
-    id: 'limpieza_profunda', name: 'Limpieza profunda de interiores', icon: '🧽',
+    id: 'limpieza_profunda', name: 'Limpieza profunda de interiores', icon: 'interior',
     prices: { auto_chico: 700, auto_mediano: 800, auto_grande: 900, suv_chica: 1000, suv_grande: 1100, camioneta_larga: 1300, camioneta_extra: 1500 }
   },
   {
-    id: 'pulido_correccion', name: 'Pulido y corrección de pintura', icon: '✨',
+    id: 'pulido_correccion', name: 'Pulido y corrección de pintura', icon: 'polish',
     prices: { auto_chico: 1200, auto_mediano: 1400, auto_grande: 1600, suv_chica: 1800, suv_grande: 2000, camioneta_larga: 2300, camioneta_extra: 2600 }
   },
   {
-    id: 'tratamiento_ceramico', name: 'Tratamiento cerámico (6-8 meses)', icon: '🛡️',
+    id: 'tratamiento_ceramico', name: 'Tratamiento cerámico (6-8 meses)', icon: 'ceramic',
     prices: { auto_chico: 1800, auto_mediano: 2100, auto_grande: 2400, suv_chica: 2700, suv_grande: 3000, camioneta_larga: 3500, camioneta_extra: 4000 }
   },
   {
-    id: 'descontaminacion_vidrios', name: 'Descontaminación de Vidrios', icon: '💦',
+    id: 'descontaminacion_vidrios', name: 'Descontaminación de Vidrios', icon: 'glass',
     prices: { auto_chico: 1800, auto_mediano: 2100, auto_grande: 2400, suv_chica: 2700, suv_grande: 3000, camioneta_larga: 3500, camioneta_extra: 4000 }
   },
   {
-    id: 'proteccion_llantas', name: 'Protección de llantas', icon: '🛞',
+    id: 'proteccion_llantas', name: 'Protección de llantas', icon: 'tires',
     prices: { auto_chico: 350, auto_mediano: 350, auto_grande: 350, suv_chica: 350, suv_grande: 350, camioneta_larga: 350, camioneta_extra: 350 }
   },
   {
-    id: 'detallado_motor', name: 'Detallado de motor', icon: '🔧',
+    id: 'detallado_motor', name: 'Detallado de motor', icon: 'engine',
     prices: { auto_chico: 500, auto_mediano: 500, auto_grande: 500, suv_chica: 500, suv_grande: 500, camioneta_larga: 600, camioneta_extra: 700 }
   }
 ];

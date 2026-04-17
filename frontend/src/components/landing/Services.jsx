@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Car, Sparkles, Star, Home, Droplets } from "lucide-react";
 import { IMAGES, fadeInUp, staggerContainer } from "@/lib/constants";
 import { hoverLiftSmall, viewportOnce } from "./shared";
@@ -13,8 +12,8 @@ const SERVICES = [
 export const Services = () => (
   <section className="py-16 md:py-24" data-testid="services-section">
     <div className="max-w-7xl mx-auto px-6 md:px-12">
-      <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={staggerContainer}>
-        <motion.div variants={fadeInUp} className="mb-12 md:mb-16">
+      <div>
+        <div className="mb-12 md:mb-16">
           <div className="flex items-center gap-3 mb-6">
             <Car className="w-6 h-6 text-[#1F6AE1]" />
             <span className="text-[#1F6AE1] font-bold tracking-[0.2em] text-xs md:text-sm uppercase">NUESTROS SERVICIOS</span>
@@ -23,26 +22,25 @@ export const Services = () => (
             SERVICIOS DE <br />
             <span className="text-[#1F6AE1]">DETALLADO</span>
           </h2>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {SERVICES.map((service) => (
-            <motion.div
+            <div
               key={service.id}
-              variants={fadeInUp}
-              className="service-card glass-card rounded-3xl overflow-hidden group cursor-pointer transition-all duration-500 hover:border-[#1F6AE1]/50"
-              whileHover={{ y: -10 }}
+
+              className="service-card glass-card rounded-3xl overflow-hidden group cursor-pointer transition-all duration-500 hover:border-[#1F6AE1]/50 hover:-translate-y-2"
               data-testid={`service-card-${service.id}`}
             >
               <div className="relative h-56 overflow-hidden">
                 {/* Placeholder image background - user will provide real ones */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#1F6AE1]/20 to-black transition-transform duration-700 group-hover:scale-110" />
+                <div className="absolute inset-0 bg-black/20 transition-transform duration-700 group-hover:scale-110" />
                 <img 
                   src={service.image} 
                   alt={service.altText} 
-                  className="w-full h-full object-cover mix-blend-overlay transition-transform duration-700 group-hover:scale-110" 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
               </div>
               <div className="p-8">
                 <div className="flex items-center gap-3 mb-4">
@@ -55,11 +53,10 @@ export const Services = () => (
                   {service.description}
                 </p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
-      </motion.div>
+      </div>
     </div>
   </section>
 );
-

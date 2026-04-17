@@ -1,13 +1,12 @@
-import { motion } from "framer-motion";
 import { MessageCircle, Phone } from "lucide-react";
-import { WHATSAPP_LINK, WHATSAPP_NUMBER, fadeInUp, staggerContainer } from "@/lib/constants";
+import { IMAGES, WHATSAPP_LINK, WHATSAPP_NUMBER } from "@/lib/constants";
 import { viewportOnce } from "./shared";
 
 export const CTASection = () => (
   <section className="py-24 md:py-32 bg-black overflow-hidden" data-testid="cta-section">
     <div className="max-w-7xl mx-auto px-6 md:px-12">
-      <motion.div
-        initial="hidden" whileInView="visible" viewport={viewportOnce} variants={staggerContainer}
+      <div
+
         className="relative glass-card p-12 md:p-24 rounded-[3rem] text-center border-t border-white/10 glow-primary"
       >
         {/* Decorative Background Elements */}
@@ -17,21 +16,21 @@ export const CTASection = () => (
         </div>
         
         <div className="relative z-10">
-          <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 bg-[#25D366]/10 border border-[#25D366]/20 px-4 py-2 rounded-full mb-8">
+          <div className="inline-flex items-center gap-2 bg-[#25D366]/10 border border-[#25D366]/20 px-4 py-2 rounded-full mb-8">
             <div className="w-2 h-2 rounded-full bg-[#25D366] animate-pulse" />
             <span className="text-[#25D366] text-xs font-bold uppercase tracking-widest">Atención Inmediata disponible</span>
-          </motion.div>
+          </div>
           
-          <motion.h2 variants={fadeInUp} className="text-5xl md:text-8xl font-black text-white mb-8 leading-tight">
+          <h2 className="text-5xl md:text-8xl font-black text-white mb-8 leading-tight">
             ¿LISTO PARA <br />
             <span className="text-[#1F6AE1]">ESTRENAR</span> AUTO?
-          </motion.h2>
+          </h2>
           
-          <motion.p variants={fadeInUp} className="text-xl md:text-2xl text-[#C9CDD3] mb-12 max-w-2xl mx-auto font-medium">
+          <p className="text-xl md:text-2xl text-[#C9CDD3] mb-12 max-w-2xl mx-auto font-medium">
             Recupera el brillo de agencia y protege tu inversión hoy mismo. El servicio más premium de la CDMX, directo a tu puerta.
-          </motion.p>
+          </p>
           
-          <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <a 
               href={WHATSAPP_LINK} 
               target="_blank" 
@@ -51,9 +50,9 @@ export const CTASection = () => (
                 55 7250 2791
               </a>
             </div>
-          </motion.div>
+          </div>
           
-          <motion.div variants={fadeInUp} className="mt-16 flex flex-wrap justify-center gap-6 md:gap-12 opacity-60">
+          <div className="mt-16 flex flex-wrap justify-center gap-6 md:gap-12 opacity-60">
             <div className="flex items-center gap-2 text-white/70 text-sm font-bold uppercase tracking-widest">
               <div className="w-1 h-1 rounded-full bg-[#1F6AE1]" />
               Garantía de Satisfacción
@@ -66,9 +65,9 @@ export const CTASection = () => (
               <div className="w-1 h-1 rounded-full bg-[#1F6AE1]" />
               Insumos de Lujo
             </div>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   </section>
-);
+);

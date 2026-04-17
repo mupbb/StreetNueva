@@ -1,5 +1,4 @@
 import { useState, useCallback, useMemo } from "react";
-import { motion } from "framer-motion";
 import { Car, Sparkles, Phone, Check, Plus, User, Send, MessageCircle } from "lucide-react";
 import { VEHICLE_TYPES, PACKAGES, UPSELLS, WHATSAPP_NUMBER, fadeInUp, staggerContainer } from "@/lib/constants";
 import { revealIn, revealVisible, viewportOnce } from "./shared";
@@ -120,8 +119,8 @@ export const QuoteForm = () => {
   return (
     <section className="py-16 md:py-24 bg-black" data-testid="quote-form-section">
       <div className="max-w-4xl mx-auto px-6 md:px-12">
-        <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={staggerContainer}>
-          <motion.div variants={fadeInUp} className="mb-12 text-center">
+        <div>
+          <div className="mb-12 text-center">
             <div className="flex items-center justify-center gap-3 mb-6">
               <Send className="w-6 h-6 text-[#1F6AE1]" />
               <span className="text-[#1F6AE1] font-bold tracking-[0.2em] text-xs md:text-sm uppercase">COTIZACIÓN DIRECTA</span>
@@ -130,9 +129,9 @@ export const QuoteForm = () => {
               SOLICITA TU <span className="text-[#1F6AE1]">COTIZACIÓN</span>
             </h2>
             <p className="text-[#C9CDD3] max-w-lg mx-auto font-medium">Completa el formulario y recibe tu cotización personalizada por WhatsApp</p>
-          </motion.div>
+          </div>
 
-          <motion.form variants={fadeInUp} onSubmit={handleSubmit} className="glass-card p-8 md:p-12 rounded-[2.5rem] space-y-8 border-t border-white/10">
+          <form onSubmit={handleSubmit} className="glass-card p-8 md:p-12 rounded-[2.5rem] space-y-8 border-t border-white/10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
                 <label className="block text-white font-bold uppercase tracking-wider text-xs mb-3"><User className="w-4 h-4 inline mr-2 text-[#1F6AE1]" />Nombre completo *</label>
@@ -181,7 +180,7 @@ export const QuoteForm = () => {
             </div>
 
             {formData.package ? (
-              <motion.div initial={revealIn} animate={revealVisible} className="bg-black/40 p-8 rounded-2xl border border-[#1F6AE1]/30 glow-primary">
+              <div className="bg-black/40 p-8 rounded-2xl border border-[#1F6AE1]/30 glow-primary">
                 <div className="flex items-center justify-between mb-6">
                   <span className="text-[#C9CDD3] font-bold uppercase tracking-widest text-sm">TOTAL ESTIMADO:</span>
                   <span className="text-4xl font-extrabold text-white">${total.toLocaleString()} <span className="text-base text-[#1F6AE1] italic font-bold">MXN</span></span>
@@ -190,12 +189,12 @@ export const QuoteForm = () => {
                   <MessageCircle className="w-6 h-6" />
                   {isSubmitting ? 'Enviando...' : 'Enviar por WhatsApp'}
                 </button>
-              </motion.div>
+              </div>
             ) : (
               <p className="text-center text-[#C9CDD3] text-sm font-bold uppercase tracking-widest bg-white/5 py-4 rounded-xl">Selecciona un paquete para ver el total</p>
             )}
-          </motion.form>
-        </motion.div>
+          </form>
+        </div>
       </div>
     </section>
 

@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Home, Sparkles, Heart, Shield } from "lucide-react";
 import { fadeInUp, staggerContainer } from "@/lib/constants";
 import { viewportOnce } from "./shared";
@@ -13,17 +12,17 @@ const BADGES = [
 export const TrustBadges = () => (
   <section className="py-6 md:py-8 border-y border-white/5 bg-white/[0.02]" data-testid="trust-section">
     <div className="max-w-7xl mx-auto px-6 md:px-12">
-      <motion.div
+      <div
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-4"
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={viewportOnce}
+
+
+
+
       >
         {BADGES.map((badge) => (
-          <motion.div
+          <div
             key={badge.id}
-            variants={fadeInUp}
+
             className="flex items-center gap-4 group justify-center lg:justify-start"
             data-testid={`trust-badge-${badge.id}`}
           >
@@ -33,10 +32,9 @@ export const TrustBadges = () => (
             <span className="text-sm md:text-base text-[#C9CDD3] font-bold uppercase tracking-wider">
               {badge.text}
             </span>
-          </motion.div>
+          </div>
         ))}
-      </motion.div>
+      </div>
     </div>
   </section>
 );
-

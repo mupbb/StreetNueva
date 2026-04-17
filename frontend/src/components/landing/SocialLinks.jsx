@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { fadeInUp, staggerContainer } from "@/lib/constants";
 import { viewportOnce } from "./shared";
 
@@ -75,20 +74,20 @@ export const SocialLinks = () => {
   return (
     <section className="py-8 md:py-10" data-testid="social-links-section">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={viewportOnce}
-          variants={staggerContainer}
+        <div
+
+
+
+
         >
-          <motion.div variants={fadeInUp} className="text-center mb-8">
+          <div className="text-center mb-8">
             <span className="text-[#1F6AE1] font-semibold tracking-wider text-sm">SÍGUENOS</span>
             <h2 className="text-3xl md:text-4xl font-bold text-white mt-2">
               Nuestras <span className="text-[#1F6AE1]">Redes Sociales</span>
             </h2>
-          </motion.div>
+          </div>
 
-          <motion.div variants={fadeInUp} className="flex flex-wrap justify-center gap-4 md:gap-6">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-6">
             {SOCIAL_LINKS.map((social) => (
               <a
                 key={social.name}
@@ -106,8 +105,8 @@ export const SocialLinks = () => {
                 </span>
               </a>
             ))}
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

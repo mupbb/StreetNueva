@@ -1,6 +1,5 @@
-import { motion } from "framer-motion";
 import { MapPin, Clock } from "lucide-react";
-import { fadeInUp, staggerContainer } from "@/lib/constants";
+import { GOOGLE_MAPS_LINK, WAZE_LINK } from "@/lib/constants";
 import { viewportOnce } from "./shared";
 
 const ZONES = [
@@ -13,8 +12,8 @@ const IFRAME_STYLE = { border: 0, borderRadius: '1rem' };
 export const CoverageZone = () => (
   <section className="py-6 md:py-8" data-testid="coverage-section">
     <div className="max-w-7xl mx-auto px-6 md:px-12">
-      <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={staggerContainer}>
-        <motion.div variants={fadeInUp} className="mb-6 md:mb-8">
+      <div>
+        <div className="mb-6 md:mb-8">
           <div className="flex items-center gap-3 mb-4">
             <MapPin className="w-6 h-6 text-[#1F6AE1]" />
             <span className="text-[#1F6AE1] font-semibold tracking-wider text-sm">ZONA DE COBERTURA</span>
@@ -25,10 +24,10 @@ export const CoverageZone = () => (
           <p className="text-[#94A3B8] text-lg max-w-xl">
             Servicio a domicilio en Álvaro Obregón y zonas cercanas de la Ciudad de México.
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <motion.div variants={fadeInUp} className="relative w-full h-[400px] md:h-[450px] rounded-2xl overflow-hidden glass-card">
+          <div className="relative w-full h-[400px] md:h-[450px] rounded-2xl overflow-hidden glass-card">
             <iframe
               src="https://storage.googleapis.com/maps-solutions-xw50v1uv8z/locator-plus/5vx4/locator-plus.html"
               width="100%" height="100%"
@@ -37,9 +36,9 @@ export const CoverageZone = () => (
               title="Street Prime Detail - Ubicación"
               allowFullScreen
             />
-          </motion.div>
+          </div>
 
-          <motion.div variants={fadeInUp} className="space-y-6">
+          <div className="space-y-6">
             <div className="glass-card p-6 rounded-2xl">
               <div className="flex items-start gap-4">
                 <div className="benefit-icon p-3 rounded-xl"><MapPin className="w-6 h-6 text-[#1F6AE1]" /></div>
@@ -94,9 +93,9 @@ export const CoverageZone = () => (
                 ))}
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   </section>
 );

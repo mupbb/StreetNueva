@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Quote, Star } from "lucide-react";
 import { TESTIMONIALS, GOOGLE_MAPS_REVIEW_LINK, fadeInUp, staggerContainer } from "@/lib/constants";
 import { StarRating, viewportOnce } from "./shared";
@@ -86,8 +85,8 @@ export const GoogleReviews = () => {
   return (
     <section className="py-6 md:py-8 bg-[#0F2A44]/20" data-testid="reviews-section">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={staggerContainer}>
-          <motion.div variants={fadeInUp} className="mb-6 md:mb-8 text-center">
+        <div>
+          <div className="mb-6 md:mb-8 text-center">
             <div className="flex items-center justify-center gap-3 mb-4">
               <GoogleIcon />
               <span className="text-[#1F6AE1] font-semibold tracking-wider text-sm">RESEÑAS EN GOOGLE</span>
@@ -102,9 +101,9 @@ export const GoogleReviews = () => {
                 {placeInfo.totalReviews > 0 ? `(${placeInfo.totalReviews} reseñas)` : 'en Google Maps'}
               </span>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div variants={fadeInUp} className="relative">
+          <div className="relative">
             <div className="glass-card p-8 md:p-12 rounded-3xl max-w-3xl mx-auto relative">
               <Quote className="absolute top-6 left-6 w-12 h-12 text-[#1F6AE1]/20" />
               {isLoading ? (
@@ -121,14 +120,14 @@ export const GoogleReviews = () => {
                 </>
               )}
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div variants={fadeInUp} className="mt-8 flex justify-center">
+          <div className="mt-8 flex justify-center">
             <a href={GOOGLE_MAPS_REVIEW_LINK} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 btn-primary text-white font-bold px-6 py-3 rounded-full transition-transform hover:scale-105" data-testid="leave-review-link">
               <Star className="w-5 h-5" />
               Déjanos tu reseña
             </a>
-          </motion.div>
+          </div>
           {/* Structured Data for SEO (Review Schema) */}
           <script type="application/ld+json">
             {JSON.stringify({
@@ -154,7 +153,7 @@ export const GoogleReviews = () => {
               }))
             })}
           </script>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

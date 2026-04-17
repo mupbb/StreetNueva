@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Check, Shield, Zap, Star, MessageCircle } from "lucide-react";
 import { CARE_PLANS, WHATSAPP_NUMBER, fadeInUp, staggerContainer } from "@/lib/constants";
 import { viewportOnce } from "./shared";
@@ -12,8 +11,8 @@ export const CarePlans = () => {
   return (
     <section className="py-20 md:py-32 bg-black overflow-hidden" id="planes">
       <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <motion.div initial="hidden" whileInView="visible" viewport={viewportOnce} variants={staggerContainer}>
-          <motion.div variants={fadeInUp} className="mb-16 md:mb-24 text-center">
+        <div>
+          <div className="mb-16 md:mb-24 text-center">
             <div className="flex items-center justify-center gap-3 mb-6">
               <Shield className="w-6 h-6 text-[#1F6AE1]" />
               <span className="text-[#1F6AE1] font-bold tracking-[0.2em] text-xs md:text-sm uppercase">RETENCIÓN Y RECURRENCIA</span>
@@ -24,13 +23,13 @@ export const CarePlans = () => {
             <p className="text-[#C9CDD3] max-w-2xl mx-auto font-medium text-lg">
               Mantén el brillo y la protección de tu vehículo de forma regular con nuestros planes exclusivos. Sin suscripciones automáticas.
             </p>
-          </motion.div>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
             {CARE_PLANS.map((plan, index) => (
-              <motion.div
+              <div
                 key={plan.id}
-                variants={fadeInUp}
+
                 className="relative group h-full"
               >
                 {/* Glow Background */}
@@ -39,7 +38,15 @@ export const CarePlans = () => {
                   style={{ backgroundColor: plan.accent }}
                 />
                 
-                <div className="relative glass-card h-full rounded-[2.5rem] p-8 md:p-10 flex flex-col border-t-2 border-white/10 group-hover:border-white/20 transition-colors">
+                <div className="relative glass-card h-full rounded-[2.5rem] p-8 md:p-10 flex flex-col border-t-2 border-white/10 group-hover:border-white/20 transition-colors overflow-hidden">
+                  {/* Watermark Background */}
+                  <img 
+                    src="/assets/landing/card-watermark.png" 
+                    alt="" 
+                    className="absolute inset-0 w-full h-full object-cover opacity-[0.05] grayscale pointer-events-none"
+                  />
+                  
+                  <div className="relative z-10 flex flex-col h-full">
                   <div className="mb-8">
                     <div className="flex items-center gap-2 mb-4">
                       {index === 0 && <Zap className="w-5 h-5" style={{ color: plan.accent }} />}
@@ -82,18 +89,19 @@ export const CarePlans = () => {
                     Activación manual · Pago directo
                   </p>
                 </div>
-              </motion.div>
-            ))}
+              </div>
+            </div>
+          ))}
           </div>
 
-          <motion.div variants={fadeInUp} className="mt-20 text-center">
+          <div className="mt-20 text-center">
             <div className="inline-block glass-card px-8 py-6 rounded-3xl border border-white/5 max-w-2xl mx-auto">
               <p className="text-[#C9CDD3] text-sm md:text-base font-medium italic">
                 "El mantenimiento regular es la clave para preservar el valor y la estética de tu inversión. Nuestros planes están diseñados para simplificar tu vida."
               </p>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );
