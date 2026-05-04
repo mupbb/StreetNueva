@@ -70,8 +70,11 @@ export const GoogleReviews = () => {
         setReviews(formatApiReviews(data));
         setPlaceInfo({ rating: data.rating, totalReviews: data.user_ratings_total });
       }
-    } catch {
+    } catch (error) {
       // Fallback testimonials used by default
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Google Reviews API unreachable', error);
+      }
     } finally {
       setIsLoading(false);
     }

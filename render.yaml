@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: alberto-agent
+    runtime: docker
+    plan: free
+    region: oregon
+    envVars:
+      - key: MONGO_URL
+        sync: false
+      - key: DB_NAME
+        value: DetailAutomotriz
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: META_ACCESS_TOKEN
+        sync: false
+      - key: META_VERIFY_TOKEN
+        value: alberto_social_v1
+      - key: THREADS_USER_ID
+        sync: false
+      - key: THREADS_ACCESS_TOKEN
+        sync: false

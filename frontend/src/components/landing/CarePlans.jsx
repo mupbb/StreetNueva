@@ -1,6 +1,6 @@
-import { Check, Shield, Zap, Star, MessageCircle } from "lucide-react";
+import { Check, Shield, Zap, Star } from "lucide-react";
 import { CARE_PLANS, WHATSAPP_NUMBER, fadeInUp, staggerContainer } from "@/lib/constants";
-import { viewportOnce } from "./shared";
+import { viewportOnce, WhatsAppIcon } from "./shared";
 
 const buildCarePlanMessage = (planName) => {
   const msg = `Hola, me interesa solicitar el plan de cuidado: *${planName}*.\n\nPor favor, contáctenme para la activación.`;
@@ -81,7 +81,7 @@ export const CarePlans = () => {
                     className="w-full inline-flex items-center justify-center gap-3 py-4 rounded-2xl text-white font-extrabold uppercase tracking-wider transition-all hover:scale-105 active:scale-95 glow-primary"
                     style={{ backgroundColor: plan.accent === '#FFFFFF' ? '#1F6AE1' : plan.accent, boxShadow: `0 0 20px ${plan.accent}40` }}
                   >
-                    <MessageCircle className="w-5 h-5" />
+                    <WhatsAppIcon className="w-5 h-5" />
                     Solicitar plan
                   </a>
                   

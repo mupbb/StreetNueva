@@ -19,10 +19,10 @@ export const CoverageZone = () => (
             <span className="text-[#1F6AE1] font-semibold tracking-wider text-sm">ZONA DE COBERTURA</span>
           </div>
           <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">
-            Atendemos en <span className="text-[#1F6AE1]">CDMX</span>
+            Atendemos en toda la <span className="text-[#1F6AE1]">CDMX</span>
           </h2>
           <p className="text-[#94A3B8] text-lg max-w-xl">
-            Servicio a domicilio en Álvaro Obregón y zonas cercanas de la Ciudad de México.
+            Cobertura total en la Ciudad de México. Especialistas en Zona Poniente (Sin cargo adicional).
           </p>
         </div>
 
@@ -86,12 +86,15 @@ export const CoverageZone = () => (
             </div>
 
             <div className="glass-card p-6 rounded-2xl">
-              <h3 className="text-lg font-bold text-white mb-3">Zonas Principales</h3>
-              <div className="flex flex-wrap gap-2">
+              <h3 className="text-lg font-bold text-white mb-3">Zonas Preferentes (Poniente)</h3>
+              <div className="flex flex-wrap gap-2 mb-4">
                 {ZONES.map((zone) => (
                   <span key={zone} className="px-3 py-1 bg-[#1F6AE1]/10 border border-[#1F6AE1]/30 rounded-full text-sm text-[#C9CDD3]">{zone}</span>
                 ))}
               </div>
+              <p className="text-[#94A3B8] text-[10px] uppercase tracking-widest font-bold border-t border-white/5 pt-4">
+                * Para otras zonas de la CDMX aplica un cargo por traslado del 15%
+              </p>
             </div>
           </div>
         </div>

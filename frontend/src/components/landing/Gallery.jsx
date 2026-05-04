@@ -1,6 +1,6 @@
 import { Sparkles, ChevronRight } from "lucide-react";
 import { WHATSAPP_NUMBER, fadeInUp, staggerContainer } from "@/lib/constants";
-import { viewportOnce } from "./shared";
+import { viewportOnce, WhatsAppIcon } from "./shared";
 import { BeforeAfterSlider } from "./BeforeAfterSlider";
 
 export const Gallery = () => {
@@ -33,8 +33,8 @@ export const Gallery = () => {
               className="inline-flex items-center gap-4 bg-[#1F6AE1] text-white font-black px-12 py-6 rounded-2xl uppercase tracking-[0.2em] text-xl transition-all hover:scale-105 active:scale-95 glow-primary shadow-[0_0_30px_rgba(31,106,225,0.4)]" 
               data-testid="gallery-whatsapp-btn"
             >
+              <WhatsAppIcon className="w-7 h-7" />
               QUIERO MI AUTO ASÍ
-              <ChevronRight className="w-6 h-6" />
             </a>
           </div>
         </div>

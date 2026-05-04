@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { Car, Sparkles, Phone, Check, Plus, User, Send, MessageCircle } from "lucide-react";
 import { VEHICLE_TYPES, PACKAGES, UPSELLS, WHATSAPP_NUMBER, fadeInUp, staggerContainer } from "@/lib/constants";
-import { revealIn, revealVisible, viewportOnce } from "./shared";
+import { revealIn, revealVisible, viewportOnce, WhatsAppIcon } from "./shared";
 import { trackUserAction } from "@/lib/apiUtils";
 
 const INPUT_CLASS = "w-full px-4 py-3 rounded-xl bg-[#0B0D10] border border-white/10 text-white placeholder-[#94A3B8] focus:border-[#1F6AE1] focus:outline-none transition-colors";
@@ -181,12 +181,15 @@ export const QuoteForm = () => {
 
             {formData.package ? (
               <div className="bg-black/40 p-8 rounded-2xl border border-[#1F6AE1]/30 glow-primary">
-                <div className="flex items-center justify-between mb-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 gap-2">
                   <span className="text-[#C9CDD3] font-bold uppercase tracking-widest text-sm">TOTAL ESTIMADO:</span>
-                  <span className="text-4xl font-extrabold text-white">${total.toLocaleString()} <span className="text-base text-[#1F6AE1] italic font-bold">MXN</span></span>
+                  <div className="text-right">
+                    <span className="text-4xl font-extrabold text-white">${total.toLocaleString()} <span className="text-base text-[#1F6AE1] italic font-bold">MXN</span></span>
+                    <p className="text-[#94A3B8] text-[10px] uppercase tracking-widest mt-1">*Base Poniente. +15% resto de CDMX.</p>
+                  </div>
                 </div>
                 <button type="submit" disabled={isSubmitting} className="w-full btn-whatsapp text-white font-extrabold py-5 rounded-2xl uppercase tracking-[0.2em] transition-all hover:scale-[1.02] flex items-center justify-center gap-4 disabled:opacity-50 glow-whatsapp" data-testid="form-submit">
-                  <MessageCircle className="w-6 h-6" />
+                  <WhatsAppIcon className="w-6 h-6" />
                   {isSubmitting ? 'Enviando...' : 'Enviar por WhatsApp'}
                 </button>
               </div>

@@ -1,5 +1,6 @@
-import { MessageCircle, Phone, Mail, MapPin, Clock, FileText, ExternalLink } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, FileText, ExternalLink } from "lucide-react";
 import { IMAGES, WHATSAPP_LINK, WHATSAPP_NUMBER } from "@/lib/constants";
+import { WhatsAppIcon } from "./shared";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -16,7 +17,7 @@ export const Footer = () => {
             </p>
             <div className="flex items-center gap-3">
               <a href={WHATSAPP_LINK} target="_blank" rel="noopener noreferrer" className="benefit-icon p-2 rounded-lg hover:bg-[#25D366]/20 transition-colors" data-testid="footer-whatsapp-link">
-                <MessageCircle className="w-5 h-5 text-[#25D366]" />
+                <WhatsAppIcon className="w-5 h-5 text-[#25D366]" />
               </a>
               <a href={`tel:${WHATSAPP_NUMBER}`} className="benefit-icon p-2 rounded-lg hover:bg-[#1F6AE1]/20 transition-colors" data-testid="footer-phone-link">
                 <Phone className="w-5 h-5 text-[#1F6AE1]" />

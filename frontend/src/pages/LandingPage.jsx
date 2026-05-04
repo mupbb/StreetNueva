@@ -28,7 +28,7 @@ const SectionLoader = () => (
 
 export function LandingPage() {
   useEffect(() => {
-    document.title = "Street Prime Detail | Detallado Automotriz a Domicilio CDMX";
+    document.title = "Detallado de Autos a Domicilio en CDMX | Especialistas en Poniente, Santa Fe, Interlomas";
     window.scrollTo(0, 0);
   }, []);
 

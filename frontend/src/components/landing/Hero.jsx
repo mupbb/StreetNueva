@@ -1,5 +1,6 @@
-import { MessageCircle, Phone } from "lucide-react";
+import { Phone } from "lucide-react";
 import { IMAGES, WHATSAPP_LINK, WHATSAPP_NUMBER, fadeInUp, staggerContainer } from "../../lib/constants";
+import { WhatsAppIcon } from "./shared";
 
 export function Hero() {
   return (
@@ -30,7 +31,7 @@ export function Hero() {
           <h1 className="text-5xl sm:text-6xl lg:text-8xl font-extrabold text-white leading-[0.9] mb-8 uppercase">
             DETALLADO DE AUTOS <br />
             A DOMICILIO <br />
-            <span className="text-[#1F6AE1]">EN CDMX</span>
+            <span className="text-[#1F6AE1]">EN EL CDMX • PONIENTE</span>
           </h1>
           
           <p className="text-base md:text-lg text-[#C9CDD3] mb-10 max-w-xl font-medium leading-relaxed">
@@ -58,7 +59,7 @@ export function Hero() {
               className="w-full sm:w-auto inline-flex items-center justify-center gap-3 border border-white/20 hover:border-[#1F6AE1]/50 text-white font-bold px-10 py-4 rounded-full uppercase tracking-wider transition-all hover:scale-105 bg-black/20 backdrop-blur-sm"
               data-testid="hero-whatsapp-btn"
             >
-              <MessageCircle className="w-5 h-5" />
+              <WhatsAppIcon className="w-5 h-5" />
               Agendar ahora
             </a>
           </div>

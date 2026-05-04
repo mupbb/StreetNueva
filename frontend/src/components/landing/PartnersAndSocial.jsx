@@ -57,7 +57,7 @@ export const PartnersAndSocial = () => {
                 <div className="w-full h-full flex items-center justify-center overflow-hidden">
                   <img 
                     src={brand.logo} 
-                    alt={brand.name} 
+                    alt={`Logo de ${brand.name} - Producto aliado de Street Prime Detail`} 
                     className="w-full h-full object-contain opacity-90 hover:opacity-100 transition-opacity scale-[2.2]" 
                   />
                 </div>

@@ -25,11 +25,14 @@ export const sendMetaEvent = async (eventName, value = 0, phone = null, email = 
         });
 
         if (!response.ok) {
-            console.error(`Meta CAPI error: ${response.status}`);
+            // Log warning only if we have a successful connection but bad status
+            console.warn(`Meta CAPI status: ${response.status}`);
         }
     } catch (error) {
-        // Meta event delivery is non-critical, fail silently in production
-        console.warn('Meta CAPI connection failed', error);
+        // Meta event delivery is non-critical, silence network errors in production
+        if (process.env.NODE_ENV === 'development') {
+            console.warn('Meta CAPI connection failed', error);
+        }
     }
 };
 

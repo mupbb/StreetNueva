@@ -1,11 +1,11 @@
 import { useState, useCallback, useMemo } from "react";
 import { 
-  Calculator, CheckCircle2, Check, Plus, MessageCircle, 
+  Calculator, CheckCircle2, Check, Plus, 
   Car, Truck, Sparkles, ShieldCheck, Droplets, Info, Wrench, Bitcoin
 } from "lucide-react";
 import { VEHICLE_TYPES, PACKAGES, UPSELLS, WHATSAPP_NUMBER, CRYPTO, fadeInUp, staggerContainer } from "@/lib/constants";
 import { CryptoModal } from "./CryptoModal";
-import { hoverLiftSmall, revealIn, revealVisible, viewportOnce } from "./shared";
+import { hoverLiftSmall, revealIn, revealVisible, viewportOnce, WhatsAppIcon } from "./shared";
 import { trackUserAction } from "@/lib/apiUtils";
 
 const GET_ICON = (iconId) => {
@@ -67,10 +67,10 @@ const VehicleSelector = ({ selected, onSelect }) => (
           }`}
           data-testid={`vehicle-${vehicle.id}`}
         >
-          <div className={`mb-2 transition-transform duration-300 group-hover:scale-110 ${selected === vehicle.id ? 'text-white' : 'text-[#1F6AE1]'}`}>
+          <div className={`mb-1 md:mb-2 transition-transform duration-300 group-hover:scale-110 ${selected === vehicle.id ? 'text-white' : 'text-[#1F6AE1]'}`}>
             {GET_ICON(vehicle.icon)}
           </div>
-          <span className="text-[10px] sm:text-xs uppercase tracking-tighter whitespace-nowrap overflow-hidden text-ellipsis w-full text-center">
+          <span className="text-[9px] sm:text-xs uppercase tracking-tighter sm:tracking-normal whitespace-nowrap overflow-hidden text-ellipsis w-full text-center leading-none">
             {vehicle.name}
           </span>
         </button>
@@ -250,6 +250,9 @@ export const PricingSection = () => {
                   ${total.toLocaleString()}
                 </span>
                 <span className="text-xl md:text-2xl font-bold text-[#1F6AE1] ml-4 italic">MXN</span>
+                <p className="mt-4 text-[#94A3B8] text-xs md:text-sm font-medium uppercase tracking-widest">
+                  *Precios base para Zona Poniente. Aplica +15% en el resto de la CDMX.
+                </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-6 justify-center">
                 <a
@@ -257,11 +260,11 @@ export const PricingSection = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => handleCTAClick('WhatsApp')}
-                  className="inline-flex items-center gap-4 btn-whatsapp text-white font-bold px-10 py-5 rounded-full uppercase tracking-wider transition-all hover:scale-105 glow-whatsapp"
+                  className="flex-1 inline-flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#1fb355] text-white font-bold px-10 py-5 rounded-full uppercase tracking-wider transition-all hover:scale-105 glow-whatsapp"
                   data-testid="pricing-whatsapp-btn"
                 >
-                  <MessageCircle className="w-6 h-6" />
-                  Solicitar este servicio
+                  <WhatsAppIcon className="w-6 h-6" />
+                  Cotizar por WhatsApp
                 </a>
                 
                 <button

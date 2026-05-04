@@ -1,6 +1,6 @@
-import { MessageCircle, Phone } from "lucide-react";
+import { Phone } from "lucide-react";
 import { IMAGES, WHATSAPP_LINK, WHATSAPP_NUMBER } from "@/lib/constants";
-import { viewportOnce } from "./shared";
+import { viewportOnce, WhatsAppIcon } from "./shared";
 
 export const CTASection = () => (
   <section className="py-24 md:py-32 bg-black overflow-hidden" data-testid="cta-section">
@@ -38,7 +38,7 @@ export const CTASection = () => (
               className="group relative inline-flex items-center gap-4 btn-whatsapp text-white font-black px-12 py-6 rounded-2xl uppercase tracking-[0.1em] transition-all hover:scale-105 hover:translate-y-[-4px] active:scale-95 text-xl glow-whatsapp" 
               data-testid="cta-whatsapp-btn"
             >
-              <MessageCircle className="w-7 h-7" />
+              <WhatsAppIcon className="w-7 h-7" />
               Agendar por WhatsApp
               <div className="absolute -inset-1 opacity-0 group-hover:opacity-30 transition-opacity bg-white/20 blur-md rounded-2xl" />
             </a>

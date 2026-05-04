@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Response
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -12,10 +12,14 @@ from datetime import datetime, timezone
 import httpx
 import hashlib
 import time
-
+import json
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
+
+from .alberto_agent import process_alberto_message
+from .social_agent import publish_daily_post
 
 # Configure logging
 logging.basicConfig(
@@ -25,21 +29,41 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # MongoDB connection
-mongo_url = os.environ['MONGO_URL']
+mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+db_name = os.environ.get('DB_NAME', 'DetailAutomotriz')
+db = client[db_name]
 
-# Create the main app without a prefix
+# Create the main app
 app = FastAPI()
 
-# Create a router with the /api prefix
-api_router = APIRouter(prefix="/api")
+# Scheduler for daily posts
+scheduler = AsyncIOScheduler()
 
+@app.on_event("startup")
+async def start_scheduler():
+    # 9:00 AM - Educational
+    scheduler.add_job(publish_daily_post, 'cron', hour=9, minute=0, args=[0])
+    # 2:00 PM - Commercial
+    scheduler.add_job(publish_daily_post, 'cron', hour=14, minute=0, args=[1])
+    # 7:00 PM - Tip
+    scheduler.add_job(publish_daily_post, 'cron', hour=19, minute=0, args=[2])
+    
+    scheduler.start()
+    logger.info("📅 APScheduler iniciado: 3 posts diarios configurados.")
+
+# Middleware
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    logger.info(f"DEBUG: Incoming {request.method} request to {request.url}")
+    response = await call_next(request)
+    return response
+
+api_router = APIRouter(prefix="/api")
 
 # Define Models
 class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore")  # Ignore MongoDB's _id field
-    
+    model_config = ConfigDict(extra="ignore")
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     client_name: str
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -47,15 +71,9 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
-# Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World", "status": "healthy"}
-
-@api_router.post("/")
-async def root_post():
-    """Health check endpoint for POST requests"""
-    return {"message": "Hello World", "status": "healthy"}
+    return {"message": "Street Prime Detail API", "status": "active"}
 
 # Google Places API configuration
 GOOGLE_PLACES_API_KEY = os.environ.get('GOOGLE_PLACES_API_KEY', '')
@@ -77,94 +95,34 @@ class GooglePlaceInfo(BaseModel):
     formatted_address: str
     reviews: List[GoogleReview]
 
-# Fallback reviews data when Google Places API is not available
-FALLBACK_REVIEWS = [
-    GoogleReview(
-        author_name="Carlos Mendoza",
-        rating=5,
-        text="Excelente servicio, mi auto quedó como nuevo. Muy profesionales y puntuales. Totalmente recomendados.",
-        time="2024-01-15",
-        profile_photo_url=None,
-        relative_time_description="hace 1 mes"
-    ),
-    GoogleReview(
-        author_name="Ana García",
-        rating=5,
-        text="Increíble la atención y el resultado. El detallado premium vale cada peso. Ya es mi servicio de confianza.",
-        time="2024-01-10",
-        profile_photo_url=None,
-        relative_time_description="hace 2 meses"
-    ),
-    GoogleReview(
-        author_name="Roberto Sánchez",
-        rating=5,
-        text="Muy conveniente que vengan a domicilio. El interior de mi camioneta quedó impecable. Volveré a contratar.",
-        time="2024-01-05",
-        profile_photo_url=None,
-        relative_time_description="hace 2 meses"
-    ),
-    GoogleReview(
-        author_name="María López",
-        rating=5,
-        text="El mejor servicio de detallado que he probado. Profesionales, amables y con resultados espectaculares.",
-        time="2024-01-01",
-        profile_photo_url=None,
-        relative_time_description="hace 3 meses"
-    )
-]
-
-FALLBACK_PLACE_INFO = GooglePlaceInfo(
-    name="Street Prime Detail",
-    rating=5.0,
-    user_ratings_total=4,
-    formatted_address="Prol. San Diego 110B, San Bartolo Ameyalco, Álvaro Obregón, CDMX",
-    reviews=FALLBACK_REVIEWS
-)
-
 @api_router.get("/google-reviews", response_model=GooglePlaceInfo)
 async def get_google_reviews():
     """Fetch reviews from Google Places API (New) with fallback"""
-    # Return fallback if no API key configured
     if not GOOGLE_PLACES_API_KEY:
         logger.info("No Google Places API key configured, returning fallback reviews")
         return FALLBACK_PLACE_INFO
     
-    # 1. Try to get from Cache first (24h validity)
     try:
         cache_doc = await db.cache.find_one({"type": "google_reviews"})
         if cache_doc:
             cached_time = datetime.fromisoformat(cache_doc['timestamp'])
-            # If cache is less than 24 hours old, return it
             if (datetime.now(timezone.utc) - cached_time).total_seconds() < 86400:
-                logger.info("Returning Google Reviews from cache")
                 return GooglePlaceInfo(**cache_doc['data'])
     except Exception as e:
         logger.warning(f"Cache read error: {e}")
 
-    # 2. If no cache or expired, fetch from Google
     url = f"https://places.googleapis.com/v1/places/{PLACE_ID}"
-    headers = {
-        "X-Goog-Api-Key": GOOGLE_PLACES_API_KEY,
-        "X-Goog-FieldMask": "displayName,rating,userRatingCount,formattedAddress,reviews"
-    }
-    params = {
-        "languageCode": "es"
-    }
+    headers = {"X-Goog-Api-Key": GOOGLE_PLACES_API_KEY, "X-Goog-FieldMask": "displayName,rating,userRatingCount,formattedAddress,reviews"}
     
     try:
         async with httpx.AsyncClient() as http_client:
-            response = await http_client.get(url, headers=headers, params=params)
-            
+            response = await http_client.get(url, headers=headers, params={"languageCode": "es"})
             if response.status_code != 200:
-                logger.warning(f"Google Places API error: {response.status_code}, returning fallback reviews")
                 return FALLBACK_PLACE_INFO
             
             data = response.json()
             reviews = data.get("reviews", [])
-            
-            # If no reviews from API, return fallback
             if not reviews:
-                logger.info("No reviews from Google Places API, returning fallback reviews")
                 return FALLBACK_PLACE_INFO
             
             formatted_reviews = []
@@ -187,291 +145,90 @@ async def get_google_reviews():
                 reviews=formatted_reviews
             )
 
-            # 3. Update Cache (Async update, don't wait for success for response)
-            try:
-                await db.cache.update_one(
-                    {"type": "google_reviews"},
-                    {
-                        "$set": {
-                            "timestamp": datetime.now(timezone.utc).isoformat(),
-                            "data": result.model_dump()
-                        }
-                    },
-                    upsert=True
-                )
-                logger.info("Google Reviews cache updated")
-            except Exception as ce:
-                logger.warning(f"Cache update error: {ce}")
-
+            await db.cache.update_one({"type": "google_reviews"}, {"$set": {"timestamp": datetime.now(timezone.utc).isoformat(), "data": result.model_dump()}}, upsert=True)
             return result
     except Exception as e:
-        logger.warning(f"Error fetching Google Places reviews: {e}, returning fallback reviews")
+        logger.warning(f"Error fetching Google Reviews: {e}")
         return FALLBACK_PLACE_INFO
+
+FALLBACK_REVIEWS = [
+    GoogleReview(author_name="Carlos Mendoza", rating=5, text="Excelente servicio, mi auto quedó como nuevo.", time="2024-01-15"),
+    GoogleReview(author_name="Ana García", rating=5, text="Increíble la atención y el resultado.", time="2024-01-10")
+]
+
+FALLBACK_PLACE_INFO = GooglePlaceInfo(
+    name="Street Prime Detail",
+    rating=5.0,
+    user_ratings_total=4,
+    formatted_address="Prol. San Diego 110B, San Bartolo Ameyalco, Álvaro Obregón, CDMX",
+    reviews=FALLBACK_REVIEWS
+)
 
 @api_router.post("/status", response_model=StatusCheck)
 async def create_status_check(input: StatusCheckCreate):
     status_dict = input.model_dump()
     status_obj = StatusCheck(**status_dict)
-    
-    # Convert to dict and serialize datetime to ISO string for MongoDB
     doc = status_obj.model_dump()
     doc['timestamp'] = doc['timestamp'].isoformat()
-    
-    _ = await db.status_checks.insert_one(doc)
+    await db.status_checks.insert_one(doc)
     return status_obj
 
 @api_router.get("/status", response_model=List[StatusCheck])
 async def get_status_checks():
-    # Exclude MongoDB's _id field from the query results
     status_checks = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
-    
-    # Convert ISO string timestamps back to datetime objects
     for check in status_checks:
         if isinstance(check['timestamp'], str):
             check['timestamp'] = datetime.fromisoformat(check['timestamp'])
-    
     return status_checks
 
 # =====================================================
-# META CONVERSIONS API INTEGRATION
+# META WEBHOOK INTEGRATION (UNIFIED)
 # =====================================================
 
-# Meta API Configuration
-META_ACCESS_TOKEN = os.environ.get('META_ACCESS_TOKEN', '')
-META_PIXEL_ID = os.environ.get('META_PIXEL_ID', '')
-META_API_VERSION = "v18.0"
+VERIFY_TOKEN = os.environ.get('META_VERIFY_TOKEN', 'alberto_social_v1')
 
-# Request/Response Models for Meta Events
-class MetaEventRequest(BaseModel):
-    event_name: str = Field(..., description="Event name: Purchase, Lead, Contact, etc.")
-    value: float = Field(..., description="Event value/amount")
-    currency: str = Field(default="MXN", description="Currency code (MXN, USD, etc.)")
-    email: Optional[str] = Field(None, description="User email (will be hashed)")
-    phone: Optional[str] = Field(None, description="User phone (will be hashed)")
-    event_id: Optional[str] = Field(None, description="Unique event ID for deduplication")
-    test_event_code: Optional[str] = Field(None, description="Test event code for testing mode")
-    
-    model_config = ConfigDict(json_schema_extra={
-        "example": {
-            "event_name": "Purchase",
-            "value": 999.00,
-            "currency": "MXN",
-            "email": "cliente@ejemplo.com",
-            "phone": "5512345678",
-            "event_id": "evt_123456",
-            "test_event_code": None
-        }
-    })
+@api_router.get("/webhook")
+async def verify_webhook(request: Request):
+    params = request.query_params
+    mode = params.get("hub.mode")
+    token = params.get("hub.verify_token")
+    challenge = params.get("hub.challenge")
 
-class MetaEventResponse(BaseModel):
-    success: bool
-    event_id: str
-    events_received: Optional[int] = None
-    messages: Optional[List[str]] = None
-    fbtrace_id: Optional[str] = None
-    error: Optional[str] = None
+    if mode == "subscribe" and token == VERIFY_TOKEN:
+        logger.info("✅ Webhook verificado correctamente.")
+        return Response(content=challenge, media_type="text/plain")
+    
+    return Response(content="Verification failed", status_code=403)
 
-def hash_sha256(value: str) -> str:
-    """Hash a value using SHA256 (Meta requirement)"""
-    if not value:
-        return None
-    # Normalize: lowercase, strip whitespace
-    normalized = value.lower().strip()
-    return hashlib.sha256(normalized.encode('utf-8')).hexdigest()
-
-def normalize_phone(phone: str) -> str:
-    """Normalize phone number for hashing"""
-    if not phone:
-        return None
-    # Remove spaces, dashes, parentheses, and + sign
-    import re
-    cleaned = re.sub(r'[\s\-\(\)\+]', '', phone)
-    # Add country code if not present (Mexico = 52)
-    if len(cleaned) == 10:
-        cleaned = "52" + cleaned
-    return cleaned
-
-async def send_meta_event(
-    event_name: str,
-    email: Optional[str] = None,
-    phone: Optional[str] = None,
-    value: float = 0,
-    currency: str = "MXN",
-    event_id: Optional[str] = None,
-    test_event_code: Optional[str] = None
-) -> dict:
-    """
-    Send event to Meta Conversions API
-    
-    Args:
-        event_name: Event type (Purchase, Lead, Contact, etc.)
-        email: User email (unhashed)
-        phone: User phone (unhashed)
-        value: Transaction value
-        currency: Currency code
-        event_id: Unique ID for deduplication
-        test_event_code: Optional test mode code
-    
-    Returns:
-        dict with success status and Meta response
-    """
-    if not META_ACCESS_TOKEN or not META_PIXEL_ID:
-        logger.error("Meta API credentials not configured")
-        return {"success": False, "error": "Meta API credentials not configured"}
-    
-    # Generate event_id if not provided
-    if not event_id:
-        event_id = f"evt_{uuid.uuid4().hex[:12]}_{int(time.time())}"
-    
-    # Generate current timestamp in seconds
-    event_time = int(time.time())
-    
-    # Hash user data
-    user_data = {}
-    if email:
-        user_data["em"] = [hash_sha256(email)]
-    if phone:
-        normalized_phone = normalize_phone(phone)
-        if normalized_phone:
-            user_data["ph"] = [hash_sha256(normalized_phone)]
-    
-    # Build event payload
-    event_payload = {
-        "event_name": event_name,
-        "event_time": event_time,
-        "event_id": event_id,
-        "action_source": "website",
-        "user_data": user_data,
-        "custom_data": {
-            "currency": currency,
-            "value": str(value)
-        }
-    }
-    
-    # Build request body
-    request_body = {
-        "data": [event_payload]
-    }
-    
-    # Add test event code if provided
-    if test_event_code:
-        request_body["test_event_code"] = test_event_code
-    
-    # Meta API endpoint
-    url = f"https://graph.facebook.com/{META_API_VERSION}/{META_PIXEL_ID}/events"
-    
+@api_router.post("/webhook")
+async def handle_webhook(request: Request):
     try:
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                url,
-                params={"access_token": META_ACCESS_TOKEN},
-                json=request_body,
-                timeout=30.0
-            )
-            
-            response_data = response.json()
-            
-            if response.status_code == 200:
-                logger.info(f"Meta event sent successfully: {event_name}, event_id: {event_id}, response: {response_data}")
-                return {
-                    "success": True,
-                    "event_id": event_id,
-                    "events_received": response_data.get("events_received"),
-                    "messages": response_data.get("messages"),
-                    "fbtrace_id": response_data.get("fbtrace_id")
-                }
-            else:
-                error_msg = response_data.get("error", {}).get("message", "Unknown error")
-                logger.error(f"Meta API error: {response.status_code} - {error_msg}")
-                return {
-                    "success": False,
-                    "event_id": event_id,
-                    "error": error_msg
-                }
-                
+        data = await request.json()
+        logger.info(f"📩 Webhook recibido: {json.dumps(data)}")
+
+        if data.get("object") == "whatsapp_business_account":
+            for entry in data.get("entry", []):
+                for change in entry.get("changes", []):
+                    value = change.get("value", {})
+                    metadata = value.get("metadata", {})
+                    
+                    phone_number_id = metadata.get("phone_number_id")
+                    if phone_number_id:
+                        os.environ["WHATSAPP_PHONE_NUMBER_ID"] = phone_number_id
+                    
+                    messages = value.get("messages", [])
+                    for msg in messages:
+                        from_phone = msg.get("from")
+                        text_body = msg.get("text", {}).get("body")
+                        if text_body:
+                            await process_alberto_message(from_phone, text_body)
+
+        return {"status": "ok"}
     except Exception as e:
-        logger.error(f"Error sending Meta event: {str(e)}")
-        return {
-            "success": False,
-            "event_id": event_id,
-            "error": str(e)
-        }
+        logger.error(f"Error en webhook: {str(e)}")
+        return {"status": "error", "message": str(e)}
 
-@api_router.post("/meta-event", response_model=MetaEventResponse)
-async def create_meta_event(request: MetaEventRequest):
-    """
-    Send conversion event to Meta Conversions API
-    
-    Use this endpoint to track:
-    - Purchase: When a sale is completed
-    - Lead: When a user submits contact info
-    - Contact: When a user initiates contact
-    - InitiateCheckout: When a user starts checkout
-    - AddToCart: When a user adds to cart
-    
-    Example request:
-    ```json
-    {
-        "event_name": "Purchase",
-        "value": 999.00,
-        "currency": "MXN",
-        "email": "cliente@ejemplo.com",
-        "phone": "5512345678"
-    }
-    ```
-    """
-    result = await send_meta_event(
-        event_name=request.event_name,
-        email=request.email,
-        phone=request.phone,
-        value=request.value,
-        currency=request.currency,
-        event_id=request.event_id,
-        test_event_code=request.test_event_code
-    )
-    
-    return MetaEventResponse(**result)
-
-@api_router.post("/track-lead")
-async def track_lead(
-    email: Optional[str] = None,
-    phone: Optional[str] = None,
-    value: float = 0
-):
-    """Quick endpoint to track Lead events"""
-    result = await send_meta_event(
-        event_name="Lead",
-        email=email,
-        phone=phone,
-        value=value,
-        currency="MXN"
-    )
-    return result
-
-@api_router.post("/track-purchase")
-async def track_purchase(
-    email: Optional[str] = None,
-    phone: Optional[str] = None,
-    value: float = 0,
-    currency: str = "MXN"
-):
-    """Quick endpoint to track Purchase events"""
-    result = await send_meta_event(
-        event_name="Purchase",
-        email=email,
-        phone=phone,
-        value=value,
-        currency=currency
-    )
-    return result
-
-# Include the router in the main app
 app.include_router(api_router)
-
-# Root-level health check for Kubernetes/deployment
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy"}
 
 app.add_middleware(
     CORSMiddleware,
@@ -482,5 +239,6 @@ app.add_middleware(
 )
 
 @app.on_event("shutdown")
-async def shutdown_db_client():
+async def shutdown():
+    scheduler.shutdown()
     client.close()
