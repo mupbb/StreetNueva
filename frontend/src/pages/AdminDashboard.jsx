@@ -150,23 +150,29 @@ export default function AdminDashboard() {
                         <div style={{ background: '#111', padding: '30px', borderRadius: '20px', border: '1px solid #1F6AE133' }}>
                             <h2>Día {metaToday.day}: {metaToday.platform}</h2>
                             <pre style={{ background: '#000', padding: '20px', whiteSpace: 'pre-wrap', color: '#eee' }}>{metaToday.content}</pre>
-                            <button onClick={() => handlePostNow('estela')}>Publicar en Facebook</button>
+                            <div style={{ background: '#000', padding: '15px', borderRadius: '10px', marginTop: '20px', border: '1px dashed #1F6AE1' }}>
+                                <p style={{ color: '#1F6AE1', fontWeight: 'bold', fontSize: '0.8rem', margin: '0 0 10px 0' }}>🚀 PROMPT PARA IA (Nano Banana):</p>
+                                <p style={{ color: '#888', fontStyle: 'italic' }}>"Hyper-realistic cinematic video of a luxury car undergoing professional detailing, focusing on {metaToday.title}, extreme macro shots, 4k, studio lighting."</p>
+                            </div>
+                            <button style={{ marginTop: '20px' }} onClick={() => handlePostNow('estela')}>Publicar en Facebook</button>
                         </div>
                     )}
                 </div>
             ) : activeTab === 'tiktok' ? (
                 <div style={{ flex: 1, overflowY: 'auto', padding: '40px', background: '#0a0a0a' }}>
                     <h1 style={{ color: '#ff0050' }}>Valentina (TikTok)</h1>
-                    <p style={{ color: '#888' }}>Enciclopedia del Detallado Automotriz</p>
                     {tiktokToday && (
                         <div style={{ background: '#111', padding: '30px', borderRadius: '20px', border: '1px solid #ff005033' }}>
                             <h2 style={{ color: '#ff0050' }}>🎬 Video Hoy: {tiktokToday.service}</h2>
-                            <h3 style={{ color: '#fff' }}>Gancho (Hook):</h3>
-                            <p style={{ background: '#000', padding: '15px', borderRadius: '10px', color: '#ffd700', fontWeight: 'bold' }}>"{tiktokToday.hook}"</p>
-                            <h3>Guion de Explicación:</h3>
+                            <div style={{ background: '#000', padding: '15px', borderRadius: '10px', marginBottom: '20px', border: '1px dashed #ff0050' }}>
+                                <p style={{ color: '#ff0050', fontWeight: 'bold', fontSize: '0.8rem', margin: '0 0 10px 0' }}>🚀 PROMPT PARA IA (Nano Banana):</p>
+                                <p style={{ color: '#888', fontStyle: 'italic' }}>"TikTok style dynamic video, macro detailing of {tiktokToday.service}, showing deep cleaning process, satisfyng visuals, 4k, vertical 9:16."</p>
+                                <button style={{ background: 'transparent', border: '1px solid #ff0050', color: '#ff0050', padding: '5px 10px', borderRadius: '5px', fontSize: '0.7rem', cursor: 'pointer' }} onClick={() => navigator.clipboard.writeText(`TikTok style dynamic video, macro detailing of ${tiktokToday.service}, showing deep cleaning process, satisfyng visuals, 4k, vertical 9:16.`)}>Copiar Prompt</button>
+                            </div>
+                            <h3>Gancho (Hook):</h3>
+                            <p style={{ background: '#000', padding: '15px', borderRadius: '10px', color: '#ffd700' }}>"{tiktokToday.hook}"</p>
+                            <h3>Guion:</h3>
                             <p style={{ background: '#000', padding: '15px', borderRadius: '10px', color: '#eee' }}>{tiktokToday.body}</p>
-                            <h3>Llamado a la acción (CTA):</h3>
-                            <p style={{ color: '#ff0050', fontWeight: 'bold' }}>{tiktokToday.cta}</p>
                             <button style={{ background: '#ff0050', color: '#fff', border: 'none', padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', marginTop: '20px' }} onClick={() => navigator.clipboard.writeText(`${tiktokToday.hook}\n\n${tiktokToday.body}\n\n${tiktokToday.cta}`)}>Copiar Guion Completo</button>
                         </div>
                     )}
