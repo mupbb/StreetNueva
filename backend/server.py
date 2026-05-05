@@ -133,6 +133,97 @@ async def handle_webhook(request: Request):
         logger.error(f"Error en webhook: {str(e)}")
         return {"status": "error"}
 
+from fastapi.responses import HTMLResponse
+
+@app.get("/alberto-admin", response_class=HTMLResponse)
+async def get_admin_dashboard():
+    return """
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Alberto Admin | Street Prime</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+        <style>
+            body { margin: 0; font-family: 'Inter', sans-serif; background: #0a0a0a; color: white; display: flex; height: 100vh; }
+            #sidebar { width: 350px; border-right: 1px solid #333; background: #111; overflow-y: auto; }
+            #chat-area { flex: 1; display: flex; flexDirection: column; background: #0a0a0a; }
+            .header { padding: 20px; border-bottom: 1px solid #333; }
+            .header h1 { margin: 0; font-size: 1.2rem; color: #ffd700; }
+            .lead-item { padding: 15px 20px; cursor: pointer; border-bottom: 1px solid #222; transition: 0.2s; }
+            .lead-item:hover { background: #222; }
+            .lead-item.active { background: #333; border-left: 4px solid #ffd700; }
+            .chat-window { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+            .msg { max-width: 75%; padding: 12px 16px; borderRadius: 15px; font-size: 0.95rem; line-height: 1.4; position: relative; }
+            .msg.user { align-self: flex-start; background: #333; border-radius: 15px 15px 15px 0; }
+            .msg.alberto { align-self: flex-end; background: #ffd700; color: black; border-radius: 15px 15px 0 15px; }
+            .msg-time { font-size: 0.6rem; margin-top: 5px; opacity: 0.6; text-align: right; }
+            #empty-state { flex: 1; display: flex; align-items: center; justify-content: center; color: #555; }
+        </style>
+    </head>
+    <body>
+        <div id="sidebar">
+            <div class="header"><h1>Alberto Admin</h1><p style="font-size:0.8rem;color:#888">Control en tiempo real</p></div>
+            <div id="leads-list"></div>
+        </div>
+        <div id="chat-area">
+            <div id="chat-header" class="header" style="display:none">
+                <h3 id="chat-title" style="margin:0"></h3>
+            </div>
+            <div id="chat-window" class="chat-window">
+                <div id="empty-state">Selecciona un cliente para ver el chat</div>
+            </div>
+        </div>
+
+        <script>
+            let selectedPhone = null;
+
+            async function fetchLeads() {
+                const res = await fetch('/api/leads');
+                const leads = await res.json();
+                const list = document.getElementById('leads-list');
+                list.innerHTML = leads.map(l => `
+                    <div class="lead-item ${selectedPhone === l.phone ? 'active' : ''}" onclick="selectLead('${l.phone}')">
+                        <div style="font-weight:bold">${l.name || 'Cliente Nuevo'}</div>
+                        <div style="font-size:0.8rem;color:#888">${l.phone}</div>
+                        <div style="font-size:0.7rem;color:#ffd700;margin-top:4px">${l.status || 'PROSPECTO'}</div>
+                    </div>
+                `).join('');
+            }
+
+            async function fetchMessages() {
+                if (!selectedPhone) return;
+                const res = await fetch('/api/conversations?phone=' + selectedPhone);
+                const msgs = await res.json();
+                const window = document.getElementById('chat-window');
+                document.getElementById('empty-state').style.display = 'none';
+                document.getElementById('chat-header').style.display = 'block';
+                document.getElementById('chat-title').innerText = 'Chat con ' + selectedPhone;
+                
+                window.innerHTML = msgs.reverse().map(m => `
+                    <div class="msg ${m.role}">
+                        ${m.message}
+                        <div class="msg-time">${new Date(m.timestamp).toLocaleTimeString()}</div>
+                    </div>
+                `).join('');
+                window.scrollTop = window.scrollHeight;
+            }
+
+            function selectLead(phone) {
+                selectedPhone = phone;
+                fetchLeads();
+                fetchMessages();
+            }
+
+            setInterval(fetchLeads, 10000);
+            setInterval(fetchMessages, 3000);
+            fetchLeads();
+        </script>
+    </body>
+    </html>
+    """
+
 app.include_router(api_router)
 
 app.add_middleware(
