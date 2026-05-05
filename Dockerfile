@@ -1,24 +1,17 @@
 FROM python:3.12-slim
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    gcc \
-    && rm -rf /var/lib/apt/lists/*
+# Dependencias del sistema
+RUN apt-get update && apt-get install -y gcc && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy requirements first for better caching
+# Primero las librerías (Copia limpia)
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application
+# El código completo
 COPY . .
 
-# Set environment variables
-ENV PYTHONUNBUFFERED=1
-
-# Expose the port Render will use
-EXPOSE 10000
-
-# Start the server
+# Comando de arranque profesional
+ENV PORT=10000
 CMD ["python", "-m", "uvicorn", "backend.server:app", "--host", "0.0.0.0", "--port", "10000"]
