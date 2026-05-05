@@ -11,7 +11,7 @@ from .db import db_manager
 from .alberto_agent import process_alberto_message
 from .linkedin_agent import lucero
 from .meta_agent import estela
-from .social_agent import social_agent
+from .social_agent import publish_daily_post
 from .tiktok_agent import valentina
 
 # Configuración de Logging
@@ -33,12 +33,15 @@ async def daily_social_tasks():
     # Estela a las 7:00 AM (Post Meta)
     post_meta = await estela.get_today_post()
     if post_meta: await estela.post_to_meta(post_meta["content"])
+    
+    # Threads (Ejemplo: publicación comercial a las 2 PM)
+    await publish_daily_post(1)
 
 # --- ENDPOINTS GENERALES ---
 
 @app.get("/")
 async def root():
-    return {"status": "Street Prime API is Running", "agents": ["Alberto", "Lucero", "Estela", "Valentina", "Social"]}
+    return {"status": "Street Prime API is Running", "agents": ["Alberto", "Lucero", "Estela", "Valentina", "Threads"]}
 
 @api_router.get("/leads")
 async def get_leads():
@@ -86,7 +89,9 @@ async def get_tk():
 
 @api_router.post("/{agent}/post-now")
 async def post_now(agent: str):
-    if agent == "threads": await social_agent.post_to_threads("Post manual desde Admin")
+    if agent == "threads": 
+        await publish_daily_post(1)
+        return {"status": "Post de Threads enviado"}
     return {"status": "Petición enviada"}
 
 # --- WEBHOOKS (WhatsApp) ---
@@ -101,8 +106,8 @@ async def verify(request: Request):
 
 @api_router.post("/webhook")
 async def handle_webhook(request: Request):
-    data = await request.json()
     try:
+        data = await request.json()
         messages = data.get("entry", [{}])[0].get("changes", [{}])[0].get("value", {}).get("messages", [])
         for m in messages:
             await process_alberto_message(m["from"], m.get("text", {}).get("body"))
@@ -119,7 +124,7 @@ async def get_admin_dashboard():
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>STREET PRIME MEGA DASHBOARD</title>
+        <title>STREET PRIME EMPIRE V1.0</title>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
         <style>
             body { margin: 0; font-family: 'Inter', sans-serif; background: #050505; color: white; display: flex; height: 100vh; overflow: hidden; }
@@ -134,8 +139,8 @@ async def get_admin_dashboard():
             .lead { padding: 15px 20px; cursor: pointer; border-bottom: 1px solid #111; transition: 0.2s; }
             .lead.active { background: #1a1a1a; border-left: 3px solid #ffd700; }
             .msg { max-width: 70%; padding: 12px 16px; border-radius: 15px; font-size: 0.9rem; margin-bottom: 5px; }
-            .msg.user { align-self: flex-start; background: #222; }
-            .msg.alberto { align-self: flex-end; background: #ffd700; color: #000; }
+            .msg.user { align-self: flex-start; background: #222; border-radius: 15px 15px 15px 0; }
+            .msg.alberto { align-self: flex-end; background: #ffd700; color: #000; border-radius: 15px 15px 0 15px; }
             .view { flex: 1; padding: 40px; overflow-y: auto; display: none; }
             .view.active { display: block; }
             .card { background: #111; padding: 30px; border-radius: 20px; border: 1px solid #333; margin-top: 20px; }
@@ -154,7 +159,7 @@ async def get_admin_dashboard():
         </nav>
         <main id="main">
             <div id="v-whatsapp" style="display: flex; width: 100%;">
-                <div id="sidebar"><div class="header"><h1>Alberto (WhatsApp)</h1></div><div id="leads"></div></div>
+                <div id="sidebar"><div class="header"><h1>WhatsApp (Alberto)</h1></div><div id="leads"></div></div>
                 <div id="chat"><div style="margin:auto;color:#333">Selecciona un cliente</div></div>
             </div>
             <div id="v-linkedin" class="view"><h1 style="color:#ffd700">Lucero (LinkedIn)</h1><div id="li-data" class="card"></div></div>
@@ -169,16 +174,16 @@ async def get_admin_dashboard():
                 document.querySelectorAll('.icon').forEach(i => i.classList.remove('active'));
                 document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
                 document.getElementById('v-whatsapp').style.display = t === 'whatsapp' ? 'flex' : 'none';
-                event.target.classList.add('active');
+                if(event) event.target.classList.add('active');
                 if(t !== 'whatsapp') { document.getElementById('v-' + t).classList.add('active'); load(t); }
             }
             async function load(a) {
                 const res = await fetch(`/api/${a}/today`); const d = await res.json();
                 const c = document.getElementById(a.substring(0,2) + '-data');
                 if(a === 'tiktok') {
-                    c.innerHTML = `<h2>🎬 Día ${d.day}: ${d.service}</h2><div class="prompt"><p style="color:#ff0050;font-weight:bold;font-size:0.7rem;margin:0">🚀 NANO BANANA PROMPT:</p>"Hyper-realistic cinematic detailing of ${d.service}, macro shots, vertical 9:16, 4k."</div><h3>Guion:</h3><pre>${d.body}</pre><button class="btn" onclick="copy('${d.body}')">Copiar Guion</button>`;
+                    c.innerHTML = `<h2>🎬 Día ${d.day}: ${d.service}</h2><div class="prompt"><p style="color:#ff0050;font-weight:bold;font-size:0.7rem;margin:0">🚀 NANO BANANA PROMPT:</p>"Hyper-realistic cinematic detailing of ${d.service}, macro shots, vertical 9:16, 4k."</div><h3>Guion:</h3><pre>${d.body}</pre><button class="btn" onclick="copyText('tk-b')">Copiar Guion</button><div id="tk-b" style="display:none">${d.body}</div>`;
                 } else if(a === 'linkedin') {
-                    c.innerHTML = `<h2>Día ${d.day}</h2><pre>${d.content}</pre><button class="btn" onclick="copy('${d.content}')">Copiar</button>`;
+                    c.innerHTML = `<h2>Día ${d.day}</h2><pre>${d.content}</pre><button class="btn" onclick="copyText('li-c')">Copiar</button><div id="li-c" style="display:none">${d.content}</div>`;
                 } else if(a === 'meta') {
                     c.innerHTML = `<h2>Día ${d.day}: ${d.platform}</h2><pre>${d.content}</pre><button class="btn" onclick="post('meta')">Publicar en FB</button>`;
                 }
@@ -194,7 +199,7 @@ async def get_admin_dashboard():
                 win.innerHTML = msgs.reverse().map(m => `<div class="msg ${m.role}">${m.message}</div>`).join('');
                 win.scrollTop = win.scrollHeight;
             }
-            function copy(t) { navigator.clipboard.writeText(t); alert("Copiado"); }
+            function copyText(id) { navigator.clipboard.writeText(document.getElementById(id).innerText); alert("¡Copiado!"); }
             async function post(a) { await fetch(`/api/${a}/post-now`, {method:'POST'}); alert("Enviado"); }
             setInterval(() => { if(current === 'whatsapp') fetchLeads(); }, 10000);
             fetchLeads();
