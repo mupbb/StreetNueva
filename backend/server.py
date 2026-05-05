@@ -35,6 +35,31 @@ api_router = APIRouter(prefix="/api")
 # Scheduler for daily posts
 scheduler = AsyncIOScheduler()
 
+from .meta_agent import estela
+
+# --- ESTELA (META FB/IG) ENDPOINTS ---
+
+@api_router.get("/meta/today")
+async def get_meta_today():
+    """Obtiene el post que Estela tiene preparado para hoy"""
+    post = await estela.get_today_post()
+    if not post:
+        return {"message": "Estela no tiene posts para hoy"}
+    post["_id"] = str(post["_id"])
+    return post
+
+@api_router.post("/meta/post-now")
+async def post_meta_now(platform: str = "facebook"):
+    """Ordena a Estela publicar hoy mismo"""
+    post = await estela.get_today_post()
+    if not post: return {"error": "No hay post hoy"}
+    
+    if platform == "facebook":
+        return await estela.post_to_facebook(post["content"])
+    else:
+        # Nota: Instagram requiere una URL de imagen válida para el API
+        return {"error": "Publicación de Instagram requiere media hosting"}
+
 @app.on_event("startup")
 async def startup_event():
     await db_manager.connect()
@@ -45,12 +70,23 @@ async def startup_event():
     # 9:00 PM - Tip (Estrategia Nocturna CDMX)
     scheduler.add_job(publish_daily_post, 'cron', hour=21, minute=0, args=[2])
     
-    # --- AUTONOMÍA DE LUCERO (LinkedIn) ---
-    # Revisa cada mañana a las 6:00 AM si toca publicar algo hoy
+    # --- AUTONOMÍA DE LUCERO & ESTELA ---
     scheduler.add_job(check_and_run_lucero, 'cron', hour=6, minute=0)
+    scheduler.add_job(check_and_run_estela, 'cron', hour=7, minute=0) # Estela publica a las 7 AM
     
     scheduler.start()
-    logger.info("📅 APScheduler iniciado: Alberto, Lucero y Social Agent activos.")
+    logger.info("📅 APScheduler: Alberto, Lucero, Estela y Social Agent activos.")
+
+async def check_and_run_estela():
+    """Función autónoma de Estela: Publica en FB/IG cada mañana"""
+    logger.info("🤖 Estela: Revisando calendario...")
+    post = await estela.get_today_post()
+    if post and post.get("status") != "published":
+        res = await estela.post_to_facebook(post["content"])
+        if res.get("success"):
+            db = await db_manager.get_db()
+            await db.meta_calendar.update_one({"day": post["day"]}, {"$set": {"status": "published"}})
+            logger.info("✨ Estela publicó automáticamente en Facebook.")
 
 async def check_and_run_lucero():
     """Función autónoma de Lucero: Revisa el calendario y publica si toca hoy"""
