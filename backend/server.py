@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 
 # Create the main app
 app = FastAPI()
+api_router = APIRouter(prefix="/api")
 
 # Scheduler for daily posts
 scheduler = AsyncIOScheduler()
