@@ -252,14 +252,15 @@ async def get_linkedin_today():
     post["_id"] = str(post["_id"])
     return post
 
-@api_router.get("/linkedin/calendar")
-async def get_linkedin_calendar():
-    """Obtiene todo el calendario de 30 días de Lucero"""
-    db = await db_manager.get_db()
-    calendar = await db.linkedin_calendar.find().sort("day", 1).to_list(100)
-    for p in calendar:
-        p["_id"] = str(p["_id"])
-    return calendar
+@api_router.post("/linkedin/post-now")
+async def post_linkedin_now():
+    """Ordena a Lucero publicar el post de hoy inmediatamente"""
+    post = await lucero.get_today_post()
+    if not post:
+        return {"success": False, "error": "No hay post programado para hoy."}
+    
+    result = await lucero.post_to_linkedin(post["content"])
+    return result
 
 app.include_router(api_router)
 

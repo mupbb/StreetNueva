@@ -55,6 +55,18 @@ export default function AdminDashboard() {
         } catch (err) { console.error(err); }
     };
 
+    const handlePostNow = async () => {
+        if (!window.confirm("¿Seguro que quieres publicar esto en LinkedIn ahora mismo?")) return;
+        try {
+            const res = await axios.post(`${API_URL}/linkedin/post-now`);
+            if (res.data.success) {
+                alert("🚀 ¡Publicado con éxito!");
+            } else {
+                alert("❌ Error: " + res.data.error);
+            }
+        } catch (err) { alert("Error de conexión"); }
+    };
+
     return (
         <div style={{ display: 'flex', height: '100vh', background: '#050505', color: '#fff', fontFamily: 'Inter, sans-serif' }}>
             {/* Sidebar Principal */}
@@ -124,11 +136,19 @@ export default function AdminDashboard() {
                                 whiteSpace: 'pre-wrap', color: '#eee', lineHeight: '1.6',
                                 border: '1px solid #222'
                             }}>{linkedinToday.content}</pre>
-                            <button style={{ 
-                                background: '#ffd700', color: '#000', border: 'none', 
-                                padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold',
-                                marginTop: '20px', cursor: 'pointer'
-                            }} onClick={() => navigator.clipboard.writeText(linkedinToday.content)}>Copiar Contenido</button>
+                            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                                <button style={{ 
+                                    background: '#ffd700', color: '#000', border: 'none', 
+                                    padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold',
+                                    cursor: 'pointer'
+                                }} onClick={() => navigator.clipboard.writeText(linkedinToday.content)}>Copiar Contenido</button>
+                                
+                                <button style={{ 
+                                    background: '#0077b5', color: '#fff', border: 'none', 
+                                    padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold',
+                                    cursor: 'pointer'
+                                }} onClick={handlePostNow}>🚀 Publicar en LinkedIn</button>
+                            </div>
                         </div>
                     )}
 
