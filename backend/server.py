@@ -44,8 +44,23 @@ async def startup_event():
     # 9:00 PM - Tip (Estrategia Nocturna CDMX)
     scheduler.add_job(publish_daily_post, 'cron', hour=21, minute=0, args=[2])
     
+    # --- AUTONOMÍA DE LUCERO (LinkedIn) ---
+    # Revisa cada mañana a las 6:00 AM si toca publicar algo hoy
+    scheduler.add_job(check_and_run_lucero, 'cron', hour=6, minute=0)
+    
     scheduler.start()
-    logger.info("📅 APScheduler iniciado: Posts a las 9am, 2pm y 9pm.")
+    logger.info("📅 APScheduler iniciado: Alberto, Lucero y Social Agent activos.")
+
+async def check_and_run_lucero():
+    """Función autónoma de Lucero: Revisa el calendario y publica si toca hoy"""
+    logger.info("🤖 Lucero: Revisando calendario para publicación autónoma...")
+    post = await lucero.get_today_post()
+    if post and post.get("status") != "published":
+        result = await lucero.post_to_linkedin(post["content"])
+        if result.get("success"):
+            db = await db_manager.get_db()
+            await db.linkedin_calendar.update_one({"day": post["day"]}, {"$set": {"status": "published"}})
+            logger.info(f"✨ Lucero publicó automáticamente el Día {post['day']}")
 
 @api_router.post("/social/post-now")
 async def post_social_now(post_type: int = 2):
