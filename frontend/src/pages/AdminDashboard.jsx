@@ -4,111 +4,145 @@ import axios from 'axios';
 const API_URL = "https://alberto-social-v2.onrender.com/api";
 
 export default function AdminDashboard() {
+    const [activeTab, setActiveTab] = useState('whatsapp'); // 'whatsapp' o 'linkedin'
     const [leads, setLeads] = useState([]);
     const [selectedPhone, setSelectedPhone] = useState(null);
     const [messages, setMessages] = useState([]);
+    const [linkedinToday, setLinkedinToday] = useState(null);
+    const [linkedinCalendar, setLinkedinCalendar] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchLeads();
-        const interval = setInterval(fetchLeads, 30000); // Refrescar leads cada 30s
-        return () => clearInterval(interval);
-    }, []);
+        if (activeTab === 'whatsapp') {
+            fetchLeads();
+            const interval = setInterval(fetchLeads, 30000);
+            return () => clearInterval(interval);
+        } else {
+            fetchLinkedinData();
+        }
+    }, [activeTab]);
 
     useEffect(() => {
-        if (selectedPhone) {
+        if (selectedPhone && activeTab === 'whatsapp') {
             fetchMessages(selectedPhone);
-            const interval = setInterval(() => fetchMessages(selectedPhone), 5000); // Refrescar chat cada 5s
+            const interval = setInterval(() => fetchMessages(selectedPhone), 5000);
             return () => clearInterval(interval);
         }
-    }, [selectedPhone]);
+    }, [selectedPhone, activeTab]);
 
     const fetchLeads = async () => {
         try {
             const res = await axios.get(`${API_URL}/leads`);
             setLeads(res.data);
             setLoading(false);
-        } catch (err) {
-            console.error("Error fetching leads", err);
-        }
+        } catch (err) { console.error(err); }
     };
 
     const fetchMessages = async (phone) => {
         try {
             const res = await axios.get(`${API_URL}/conversations?phone=${phone}`);
-            // Ordenar por fecha para el chat
             const sorted = res.data.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
             setMessages(sorted);
-        } catch (err) {
-            console.error("Error fetching messages", err);
-        }
+        } catch (err) { console.error(err); }
+    };
+
+    const fetchLinkedinData = async () => {
+        try {
+            const resToday = await axios.get(`${API_URL}/linkedin/today`);
+            setLinkedinToday(resToday.data);
+            const resCal = await axios.get(`${API_URL}/linkedin/calendar`);
+            setLinkedinCalendar(resCal.data);
+        } catch (err) { console.error(err); }
     };
 
     return (
-        <div style={{ display: 'flex', height: '100vh', background: '#0a0a0a', color: '#fff', fontFamily: 'Inter, sans-serif' }}>
-            {/* Sidebar: Lista de Clientes */}
-            <div style={{ width: '350px', borderRight: '1px solid #333', overflowY: 'auto', background: '#111' }}>
-                <div style={{ padding: '20px', borderBottom: '1px solid #333' }}>
-                    <h2 style={{ margin: 0, fontSize: '1.2rem', color: '#ffd700' }}>Alberto Admin</h2>
-                    <p style={{ fontSize: '0.8rem', color: '#888' }}>Monitoreo en tiempo real</p>
+        <div style={{ display: 'flex', height: '100vh', background: '#050505', color: '#fff', fontFamily: 'Inter, sans-serif' }}>
+            {/* Sidebar Principal */}
+            <div style={{ width: '80px', background: '#000', display: 'flex', flexDirection: 'column', alignItems: 'center', py: '20px', borderRight: '1px solid #222' }}>
+                <div 
+                    onClick={() => setActiveTab('whatsapp')}
+                    style={{ padding: '15px', cursor: 'pointer', opacity: activeTab === 'whatsapp' ? 1 : 0.4, transition: '0.3s' }}
+                >
+                    📱
                 </div>
-                {loading ? <p style={{ padding: '20px' }}>Cargando clientes...</p> : 
-                    leads.map(lead => (
-                        <div 
-                            key={lead.phone} 
-                            onClick={() => setSelectedPhone(lead.phone)}
-                            style={{ 
-                                padding: '15px 20px', 
-                                cursor: 'pointer', 
-                                borderBottom: '1px solid #222',
-                                background: selectedPhone === lead.phone ? '#222' : 'transparent',
-                                transition: '0.2s'
-                            }}
-                        >
-                            <div style={{ fontWeight: 'bold' }}>{lead.name || 'Cliente Nuevo'}</div>
-                            <div style={{ fontSize: '0.85rem', color: '#888' }}>{lead.phone}</div>
-                            <div style={{ fontSize: '0.7rem', marginTop: '5px', color: '#ffd700' }}>{lead.status || 'PROSPECTO'}</div>
-                        </div>
-                    ))
-                }
+                <div 
+                    onClick={() => setActiveTab('linkedin')}
+                    style={{ padding: '15px', cursor: 'pointer', opacity: activeTab === 'linkedin' ? 1 : 0.4, transition: '0.3s' }}
+                >
+                    💼
+                </div>
             </div>
 
-            {/* Main: Chat View */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                {selectedPhone ? (
-                    <>
-                        <div style={{ padding: '20px', background: '#111', borderBottom: '1px solid #333' }}>
-                            <h3 style={{ margin: 0 }}>Conversación con {selectedPhone}</h3>
+            {activeTab === 'whatsapp' ? (
+                <>
+                    {/* Lista de Chats (Alberto) */}
+                    <div style={{ width: '350px', borderRight: '1px solid #222', overflowY: 'auto', background: '#0a0a0a' }}>
+                        <div style={{ padding: '20px', borderBottom: '1px solid #222' }}>
+                            <h2 style={{ margin: 0, fontSize: '1.2rem', color: '#ffd700' }}>Alberto (WhatsApp)</h2>
+                            <p style={{ fontSize: '0.75rem', color: '#888' }}>Atención al Cliente AI</p>
                         </div>
-                        <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                            {messages.map((m, i) => (
-                                <div 
-                                    key={i} 
-                                    style={{ 
-                                        alignSelf: m.role === 'user' ? 'flex-start' : 'flex-end',
-                                        maxWidth: '70%',
-                                        padding: '12px 16px',
-                                        borderRadius: '15px',
-                                        background: m.role === 'user' ? '#333' : '#ffd700',
-                                        color: m.role === 'user' ? '#fff' : '#000',
-                                        fontSize: '0.95rem',
-                                        lineHeight: '1.4'
-                                    }}
-                                >
-                                    {m.message}
-                                    <div style={{ fontSize: '0.65rem', marginTop: '5px', opacity: 0.7, textAlign: 'right' }}>
-                                        {new Date(m.timestamp).toLocaleTimeString()}
-                                    </div>
+                        {loading ? <p style={{ padding: '20px' }}>Cargando...</p> : 
+                            leads.map(lead => (
+                                <div key={lead.phone} onClick={() => setSelectedPhone(lead.phone)}
+                                    style={{ padding: '15px 20px', cursor: 'pointer', borderBottom: '1px solid #111', background: selectedPhone === lead.phone ? '#1a1a1a' : 'transparent' }}>
+                                    <div style={{ fontWeight: 'bold' }}>{lead.name || 'Cliente Nuevo'}</div>
+                                    <div style={{ fontSize: '0.8rem', color: '#ffd700' }}>{lead.phone}</div>
                                 </div>
-                            ))}
-                        </div>
-                    </>
-                ) : (
-                    <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#444' }}>
-                        <h3>Selecciona un cliente para ver el chat</h3>
+                            ))
+                        }
                     </div>
-                )}
-            </div>
+                    {/* Chat View */}
+                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#080808' }}>
+                        {selectedPhone ? (
+                            <>
+                                <div style={{ padding: '20px', borderBottom: '1px solid #222' }}><h3>Chat: {selectedPhone}</h3></div>
+                                <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                                    {messages.map((m, i) => (
+                                        <div key={i} style={{ 
+                                            alignSelf: m.role === 'user' ? 'flex-start' : 'flex-end',
+                                            padding: '12px 16px', borderRadius: '15px',
+                                            background: m.role === 'user' ? '#222' : '#ffd700',
+                                            color: m.role === 'user' ? '#fff' : '#000', maxWidth: '70%'
+                                        }}>{m.message}</div>
+                                    ))}
+                                </div>
+                            </>
+                        ) : <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333' }}><h3>Selecciona un chat</h3></div>}
+                    </div>
+                </>
+            ) : (
+                <div style={{ flex: 1, overflowY: 'auto', padding: '40px', background: '#0a0a0a' }}>
+                    <h1 style={{ color: '#ffd700', marginBottom: '10px' }}>Lucero (LinkedIn)</h1>
+                    <p style={{ color: '#888', marginBottom: '30px' }}>Estrategia de 30 Días - Street Prime Detail</p>
+                    
+                    {linkedinToday && (
+                        <div style={{ background: '#111', padding: '30px', borderRadius: '20px', border: '1px solid #ffd70033', marginBottom: '40px' }}>
+                            <h2 style={{ color: '#ffd700', marginTop: 0 }}>📅 Post para Hoy (Día {linkedinToday.day})</h2>
+                            <p style={{ fontSize: '0.9rem', color: '#888' }}>Visual sugerido: {linkedinToday.visual}</p>
+                            <pre style={{ 
+                                background: '#000', padding: '20px', borderRadius: '10px', 
+                                whiteSpace: 'pre-wrap', color: '#eee', lineHeight: '1.6',
+                                border: '1px solid #222'
+                            }}>{linkedinToday.content}</pre>
+                            <button style={{ 
+                                background: '#ffd700', color: '#000', border: 'none', 
+                                padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold',
+                                marginTop: '20px', cursor: 'pointer'
+                            }} onClick={() => navigator.clipboard.writeText(linkedinToday.content)}>Copiar Contenido</button>
+                        </div>
+                    )}
+
+                    <h3 style={{ borderBottom: '1px solid #222', paddingBottom: '10px' }}>Calendario Editorial</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '15px', marginTop: '20px' }}>
+                        {linkedinCalendar.map(p => (
+                            <div key={p.day} style={{ background: '#111', padding: '15px', borderRadius: '10px', border: '1px solid #222' }}>
+                                <div style={{ color: '#ffd700', fontWeight: 'bold' }}>Día {p.day}</div>
+                                <div style={{ fontSize: '0.8rem', color: '#888' }}>{p.type}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
