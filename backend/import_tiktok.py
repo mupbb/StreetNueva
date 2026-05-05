@@ -1,52 +1,41 @@
 import asyncio
+import json
+import os
+from dotenv import load_dotenv
 from backend.db import db_manager
 from backend.tiktok_agent import valentina
 
-async def import_valentina_scripts():
-    # Primeros días de la enciclopedia de servicios
-    scripts = [
-        {
-            "day": 1, 
-            "service": "Piel", 
-            "title": "El Secreto de la Piel Nappa", 
-            "hook": "¿Sabías que el jabón común reseca la piel de tu auto?",
-            "body": "Explicación: La piel es un material orgánico. Necesita limpieza con pH balanceado y nutrición para no agrietarse. Mira cómo lo hacemos.",
-            "cta": "Link en bio para tratamiento de interiores."
-        },
-        {
-            "day": 2, 
-            "service": "Alcántara", 
-            "title": "Cuidado de Alcántara Profesional", 
-            "hook": "No cepilles tu alcántara en seco, podrías quemarla.",
-            "body": "Explicación: Mostramos el uso de cepillo de cerdas de crin de caballo y microfibra húmeda para revivir la textura original.",
-            "cta": "Escríbenos por WhatsApp."
-        },
-        {
-            "day": 3, 
-            "service": "Motor", 
-            "title": "Detallado de Motor Seguro", 
-            "hook": "¿Miedo a lavar tu motor? Aquí te enseñamos cómo se hace sin riesgos.",
-            "body": "Explicación: Cubrimos sensores, usamos desengrasante dieléctrico y terminamos con protector que no conduce electricidad.",
-            "cta": "Agenda tu detallado de motor hoy."
-        }
-    ]
-    
-    # Rellenamos el resto del mes con servicios clave
-    services = ["Cristales", "Rines", "Carrocería", "Cielo del auto", "Plásticos", "Faros", "Chasis", "Ozonización"]
-    for i in range(4, 31):
-        service = services[i % len(services)]
-        scripts.append({
-            "day": i,
-            "service": service,
-            "title": f"Maestría en {service}",
-            "hook": f"Día {i}: Descubre por qué el detallado de {service} es vital.",
-            "body": f"En este video Valentina explica la técnica Street Prime para {service}.",
-            "cta": "Consulta nuestros precios por WhatsApp."
-        })
+# Cargar variables de entorno desde .env
+load_dotenv()
 
+TIKTOK_STRATEGY = [
+    {
+        "day": 1,
+        "service": "Detallado de Piel",
+        "hook": "Sabias que la piel de tu auto respira?",
+        "body": "La piel nappa o sintetica necesita hidratacion constante. Si se siente rigida o brilla demasiado, es suciedad acumulada. En Street Prime usamos limpiadores de pH neutro y acondicionadores con proteccion UV.",
+        "cta": "Dale a tu interior el trato premium que merece. WhatsApp en el perfil.",
+        "hashtags": "#Detailing #CDMX #StreetPrime #Cuero"
+    },
+    {
+        "day": 2,
+        "service": "Alcantara",
+        "hook": "El terror de muchos: Limpiar Alcantara.",
+        "body": "No es tela ni es piel, es microfibra tecnica. El secreto es no empaparla. Usamos cepillos de cerdas suaves y tecnica de extraccion en seco para que recupere su suavidad original.",
+        "cta": "Agenda tu limpieza de interiores hoy.",
+        "hashtags": "#Alcantara #LuxuryCars #DetailingLife"
+    }
+]
+
+async def run_import():
+    print("Iniciando importacion de Valentina...")
     await db_manager.connect()
-    await valentina.initialize_calendar(scripts)
-    print("🎵 Enciclopedia de Valentina cargada exitosamente.")
+    db = await db_manager.get_db()
+    if db is None:
+        print("Error: No se pudo conectar a MongoDB. Verifica tu MONGO_URL en el archivo .env")
+        return
+    await valentina.initialize_calendar(TIKTOK_STRATEGY)
+    print("Valentina sincronizada con exito.")
 
 if __name__ == "__main__":
-    asyncio.run(import_valentina_scripts())
+    asyncio.run(run_import())

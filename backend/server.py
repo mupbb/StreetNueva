@@ -180,12 +180,14 @@ async def get_admin_dashboard():
             async function load(a) {
                 const res = await fetch(`/api/${a}/today`); const d = await res.json();
                 const c = document.getElementById(a.substring(0,2) + '-data');
+                if(!d || d.message) {
+                    c.innerHTML = `<p style="color:#666;text-align:center;padding:20px;">☕ ${d.message || 'Sin contenido hoy.'}</p>`;
+                    return;
+                }
                 if(a === 'tiktok') {
-                    c.innerHTML = `<h2>🎬 Día ${d.day}: ${d.service}</h2><div class="prompt"><p style="color:#ff0050;font-weight:bold;font-size:0.7rem;margin:0">🚀 NANO BANANA PROMPT:</p>"Hyper-realistic cinematic detailing of ${d.service}, macro shots, vertical 9:16, 4k."</div><h3>Guion:</h3><pre>${d.body}</pre><button class="btn" onclick="copyText('tk-b')">Copiar Guion</button><div id="tk-b" style="display:none">${d.body}</div>`;
-                } else if(a === 'linkedin') {
-                    c.innerHTML = `<h2>Día ${d.day}</h2><pre>${d.content}</pre><button class="btn" onclick="copyText('li-c')">Copiar</button><div id="li-c" style="display:none">${d.content}</div>`;
-                } else if(a === 'meta') {
-                    c.innerHTML = `<h2>Día ${d.day}: ${d.platform}</h2><pre>${d.content}</pre><button class="btn" onclick="post('meta')">Publicar en FB</button>`;
+                    c.innerHTML = `<h2>Dia ${d.day}: ${d.service}</h2><div class="prompt"><p style="color:#ff0050;font-weight:bold;font-size:0.7rem;margin:0">NANO BANANA PROMPT:</p>"Hyper-realistic cinematic detailing of ${d.service}, macro shots, vertical 9:16, 4k."</div><pre>${d.body}</pre><button class="btn" onclick="copyText('tk-b')">Copiar Guion</button><div id="tk-b" style="display:none">${d.body}</div>`;
+                } else {
+                    c.innerHTML = `<h2>Dia ${d.day || 1}</h2><pre>${d.content || d.body}</pre><button class="btn" onclick="copyText('${a}-c')">Copiar</button><div id="${a}-c" style="display:none">${d.content || d.body}</div>`;
                 }
             }
             async function fetchLeads() {
