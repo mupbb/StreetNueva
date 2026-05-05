@@ -4,13 +4,13 @@ import axios from 'axios';
 const API_URL = "https://alberto-social-v2.onrender.com/api";
 
 export default function AdminDashboard() {
-    const [activeTab, setActiveTab] = useState('whatsapp'); // 'whatsapp', 'linkedin', 'threads', 'meta'
+    const [activeTab, setActiveTab] = useState('whatsapp'); // 'whatsapp', 'linkedin', 'threads', 'meta', 'tiktok'
     const [leads, setLeads] = useState([]);
     const [selectedPhone, setSelectedPhone] = useState(null);
     const [messages, setMessages] = useState([]);
     const [linkedinToday, setLinkedinToday] = useState(null);
-    const [linkedinCalendar, setLinkedinCalendar] = useState([]);
     const [metaToday, setMetaToday] = useState(null);
+    const [tiktokToday, setTiktokToday] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -22,6 +22,8 @@ export default function AdminDashboard() {
             fetchLinkedinData();
         } else if (activeTab === 'meta') {
             fetchMetaData();
+        } else if (activeTab === 'tiktok') {
+            fetchTiktokData();
         }
     }, [activeTab]);
 
@@ -53,8 +55,6 @@ export default function AdminDashboard() {
         try {
             const resToday = await axios.get(`${API_URL}/linkedin/today`);
             setLinkedinToday(resToday.data);
-            const resCal = await axios.get(`${API_URL}/linkedin/calendar`);
-            setLinkedinCalendar(resCal.data);
         } catch (err) { console.error(err); }
     };
 
@@ -65,10 +65,17 @@ export default function AdminDashboard() {
         } catch (err) { console.error(err); }
     };
 
+    const fetchTiktokData = async () => {
+        try {
+            const res = await axios.get(`${API_URL}/tiktok/today`);
+            setTiktokToday(res.data);
+        } catch (err) { console.error(err); }
+    };
+
     const handlePostNow = async (agent) => {
         const endpoint = agent === 'lucero' ? '/linkedin/post-now' : 
                          agent === 'estela' ? '/meta/post-now' : '/social/post-now';
-        if (!window.confirm(`¿Seguro que quieres publicar en ${agent === 'lucero' ? 'LinkedIn' : agent === 'estela' ? 'Meta' : 'Threads'} ahora mismo?`)) return;
+        if (!window.confirm(`¿Seguro que quieres publicar en ${agent}?`)) return;
         try {
             const res = await axios.post(`${API_URL}${endpoint}`);
             if (res.data.success || !res.data.error) {
@@ -86,6 +93,7 @@ export default function AdminDashboard() {
                 <div onClick={() => setActiveTab('whatsapp')} style={{ padding: '20px', cursor: 'pointer', opacity: activeTab === 'whatsapp' ? 1 : 0.4, transition: '0.3s', fontSize: '1.5rem' }}>📱</div>
                 <div onClick={() => setActiveTab('linkedin')} style={{ padding: '20px', cursor: 'pointer', opacity: activeTab === 'linkedin' ? 1 : 0.4, transition: '0.3s', fontSize: '1.5rem' }}>💼</div>
                 <div onClick={() => setActiveTab('meta')} style={{ padding: '20px', cursor: 'pointer', opacity: activeTab === 'meta' ? 1 : 0.4, transition: '0.3s', fontSize: '1.5rem' }}>📸</div>
+                <div onClick={() => setActiveTab('tiktok')} style={{ padding: '20px', cursor: 'pointer', opacity: activeTab === 'tiktok' ? 1 : 0.4, transition: '0.3s', fontSize: '1.5rem' }}>🎵</div>
                 <div onClick={() => setActiveTab('threads')} style={{ padding: '20px', cursor: 'pointer', opacity: activeTab === 'threads' ? 1 : 0.4, transition: '0.3s', fontSize: '1.5rem' }}>🧵</div>
             </div>
 
@@ -95,7 +103,6 @@ export default function AdminDashboard() {
                     <div style={{ width: '350px', borderRight: '1px solid #222', overflowY: 'auto', background: '#0a0a0a' }}>
                         <div style={{ padding: '20px', borderBottom: '1px solid #222' }}>
                             <h2 style={{ margin: 0, fontSize: '1.2rem', color: '#ffd700' }}>Alberto (WhatsApp)</h2>
-                            <p style={{ fontSize: '0.75rem', color: '#888' }}>Atención al Cliente AI</p>
                         </div>
                         {loading ? <p style={{ padding: '20px' }}>Cargando...</p> : 
                             leads.map(lead => (
@@ -127,45 +134,47 @@ export default function AdminDashboard() {
                 </>
             ) : activeTab === 'linkedin' ? (
                 <div style={{ flex: 1, overflowY: 'auto', padding: '40px', background: '#0a0a0a' }}>
-                    <h1 style={{ color: '#ffd700', marginBottom: '10px' }}>Lucero (LinkedIn)</h1>
-                    <p style={{ color: '#888', marginBottom: '30px' }}>Estrategia de 30 Días - Street Prime Detail</p>
+                    <h1 style={{ color: '#ffd700' }}>Lucero (LinkedIn)</h1>
                     {linkedinToday && (
-                        <div style={{ background: '#111', padding: '30px', borderRadius: '20px', border: '1px solid #ffd70033', marginBottom: '40px' }}>
-                            <h2 style={{ color: '#ffd700', marginTop: 0 }}>📅 Post para Hoy (Día {linkedinToday.day})</h2>
-                            <p style={{ fontSize: '0.9rem', color: '#888' }}>Visual sugerido: {linkedinToday.visual}</p>
-                            <pre style={{ background: '#000', padding: '20px', borderRadius: '10px', whiteSpace: 'pre-wrap', color: '#eee', lineHeight: '1.6', border: '1px solid #222' }}>{linkedinToday.content}</pre>
-                            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                                <button style={{ background: '#ffd700', color: '#000', border: 'none', padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => navigator.clipboard.writeText(linkedinToday.content)}>Copiar Contenido</button>
-                                <button style={{ background: '#0077b5', color: '#fff', border: 'none', padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => handlePostNow('lucero')}>🚀 Publicar en LinkedIn</button>
-                            </div>
+                        <div style={{ background: '#111', padding: '30px', borderRadius: '20px', border: '1px solid #ffd70033' }}>
+                            <h2>Día {linkedinToday.day}: {linkedinToday.type}</h2>
+                            <pre style={{ background: '#000', padding: '20px', whiteSpace: 'pre-wrap', color: '#eee' }}>{linkedinToday.content}</pre>
+                            <button onClick={() => navigator.clipboard.writeText(linkedinToday.content)}>Copiar</button>
                         </div>
                     )}
                 </div>
             ) : activeTab === 'meta' ? (
                 <div style={{ flex: 1, overflowY: 'auto', padding: '40px', background: '#0a0a0a' }}>
-                    <h1 style={{ color: '#ffd700', marginBottom: '10px' }}>Estela (Meta FB/IG)</h1>
-                    <p style={{ color: '#888', marginBottom: '30px' }}>Monetización y Comunidad</p>
+                    <h1 style={{ color: '#1F6AE1' }}>Estela (Meta FB/IG)</h1>
                     {metaToday && (
-                        <div style={{ background: '#111', padding: '30px', borderRadius: '20px', border: '1px solid #1F6AE133', marginBottom: '40px' }}>
-                            <h2 style={{ color: '#1F6AE1', marginTop: 0 }}>📅 Post para Hoy (Día {metaToday.day})</h2>
-                            <p style={{ fontSize: '0.9rem', color: '#888' }}>Plataforma: {metaToday.platform} | Visual: {metaToday.visual}</p>
-                            <pre style={{ background: '#000', padding: '20px', borderRadius: '10px', whiteSpace: 'pre-wrap', color: '#eee', lineHeight: '1.6', border: '1px solid #222' }}>{metaToday.content}</pre>
-                            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                                <button style={{ background: '#1F6AE1', color: '#fff', border: 'none', padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => handlePostNow('estela')}>🚀 Publicar en Facebook</button>
-                            </div>
+                        <div style={{ background: '#111', padding: '30px', borderRadius: '20px', border: '1px solid #1F6AE133' }}>
+                            <h2>Día {metaToday.day}: {metaToday.platform}</h2>
+                            <pre style={{ background: '#000', padding: '20px', whiteSpace: 'pre-wrap', color: '#eee' }}>{metaToday.content}</pre>
+                            <button onClick={() => handlePostNow('estela')}>Publicar en Facebook</button>
+                        </div>
+                    )}
+                </div>
+            ) : activeTab === 'tiktok' ? (
+                <div style={{ flex: 1, overflowY: 'auto', padding: '40px', background: '#0a0a0a' }}>
+                    <h1 style={{ color: '#ff0050' }}>Valentina (TikTok)</h1>
+                    <p style={{ color: '#888' }}>Enciclopedia del Detallado Automotriz</p>
+                    {tiktokToday && (
+                        <div style={{ background: '#111', padding: '30px', borderRadius: '20px', border: '1px solid #ff005033' }}>
+                            <h2 style={{ color: '#ff0050' }}>🎬 Video Hoy: {tiktokToday.service}</h2>
+                            <h3 style={{ color: '#fff' }}>Gancho (Hook):</h3>
+                            <p style={{ background: '#000', padding: '15px', borderRadius: '10px', color: '#ffd700', fontWeight: 'bold' }}>"{tiktokToday.hook}"</p>
+                            <h3>Guion de Explicación:</h3>
+                            <p style={{ background: '#000', padding: '15px', borderRadius: '10px', color: '#eee' }}>{tiktokToday.body}</p>
+                            <h3>Llamado a la acción (CTA):</h3>
+                            <p style={{ color: '#ff0050', fontWeight: 'bold' }}>{tiktokToday.cta}</p>
+                            <button style={{ background: '#ff0050', color: '#fff', border: 'none', padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', marginTop: '20px' }} onClick={() => navigator.clipboard.writeText(`${tiktokToday.hook}\n\n${tiktokToday.body}\n\n${tiktokToday.cta}`)}>Copiar Guion Completo</button>
                         </div>
                     )}
                 </div>
             ) : (
                 <div style={{ flex: 1, overflowY: 'auto', padding: '40px', background: '#0a0a0a' }}>
-                    <h1 style={{ color: '#ffd700', marginBottom: '10px' }}>Threads Agent</h1>
-                    <p style={{ color: '#888', marginBottom: '30px' }}>Automatización de Contenido Diario</p>
-                    <div style={{ background: '#111', padding: '40px', borderRadius: '20px', border: '1px solid #333', textAlign: 'center' }}>
-                        <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🧵</div>
-                        <h2>Publicación Nocturna (9:00 PM)</h2>
-                        <p style={{ color: '#888', maxWidth: '500px', margin: '0 auto 30px' }}>El agente generará automáticamente un "Tip del Día" enfocado en el clima de CDMX y el cuidado premium.</p>
-                        <button style={{ background: '#fff', color: '#000', border: 'none', padding: '15px 40px', borderRadius: '12px', fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer' }} onClick={() => handlePostNow('threads')}>🚀 Publicar en Threads AHORA</button>
-                    </div>
+                    <h1 style={{ color: '#fff' }}>Threads Agent 🧵</h1>
+                    <button onClick={() => handlePostNow('threads')}>Publicar en Threads AHORA</button>
                 </div>
             )}
         </div>

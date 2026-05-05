@@ -60,6 +60,19 @@ async def post_meta_now(platform: str = "facebook"):
         # Nota: Instagram requiere una URL de imagen válida para el API
         return {"error": "Publicación de Instagram requiere media hosting"}
 
+from .tiktok_agent import valentina
+
+# --- VALENTINA (TIKTOK) ENDPOINTS ---
+
+@api_router.get("/tiktok/today")
+async def get_tiktok_today():
+    """Obtiene el guion que Valentina tiene preparado para hoy"""
+    script = await valentina.get_today_script()
+    if not script:
+        return {"message": "Valentina no tiene guiones para hoy"}
+    script["_id"] = str(script["_id"])
+    return script
+
 @app.on_event("startup")
 async def startup_event():
     await db_manager.connect()
