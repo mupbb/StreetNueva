@@ -72,10 +72,15 @@ IMPORTANTE:
 - Tu WhatsApp es 55 7250 2791.
 """
 
+from .capi_api import send_capi_event
+
 async def process_alberto_message(from_phone: str, message_text: str):
     """Procesa mensajes entrantes y los guarda en la base de datos"""
     # 1. Guardar mensaje del cliente
     await save_to_history(from_phone, "user", message_text)
+    
+    # 2. Avisar a Meta (CAPI) que tenemos un interesado
+    await send_capi_event("Lead", {"phone": from_phone})
     
     try:
         response = await client.chat.completions.create(
