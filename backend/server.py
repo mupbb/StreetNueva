@@ -77,14 +77,29 @@ async def get_conversations(phone: Optional[str] = None):
 
 @api_router.get("/leads")
 async def get_leads():
-    """Obtiene la lista de clientes/prospectos"""
+    """Obtiene la lista de clientes/prospectos basándose en las conversaciones"""
     db = await db_manager.get_db()
-    leads = await db.leads.find().sort("last_update", -1).to_list(100)
-    for lead in leads:
-        lead["_id"] = str(lead["_id"])
-        if isinstance(lead["last_update"], datetime):
-            lead["last_update"] = lead["last_update"].isoformat()
-    return leads
+    
+    # Obtenemos los números únicos de la colección de conversaciones
+    unique_phones = await db.conversations.distinct("phone")
+    
+    results = []
+    for phone in unique_phones:
+        # Buscamos si tiene una ficha de lead
+        lead_data = await db.leads.find_one({"phone": phone})
+        # Buscamos el último mensaje para mostrar la hora de actividad
+        last_msg = await db.conversations.find_one({"phone": phone}, sort=[("timestamp", -1)])
+        
+        results.append({
+            "phone": phone,
+            "name": lead_data.get("name") if lead_data else "Cliente Nuevo",
+            "status": lead_data.get("status") if lead_data else "CHATEANDO",
+            "last_update": last_msg.get("timestamp").isoformat() if last_msg else datetime.now(timezone.utc).isoformat()
+        })
+    
+    # Ordenar por el más reciente
+    results.sort(key=lambda x: x["last_update"], reverse=True)
+    return results
 
 # --- GOOGLE REVIEWS FALLBACK ---
 # (Keeping your existing reviews logic)
