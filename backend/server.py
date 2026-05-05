@@ -239,6 +239,28 @@ async def get_admin_dashboard():
     </html>
     """
 
+from .linkedin_agent import lucero
+
+# --- LUCERO (LINKEDIN) ENDPOINTS ---
+
+@api_router.get("/linkedin/today")
+async def get_linkedin_today():
+    """Obtiene el post que Lucero tiene preparado para hoy"""
+    post = await lucero.get_today_post()
+    if not post:
+        return {"message": "Lucero no tiene posts programados para hoy"}
+    post["_id"] = str(post["_id"])
+    return post
+
+@api_router.get("/linkedin/calendar")
+async def get_linkedin_calendar():
+    """Obtiene todo el calendario de 30 días de Lucero"""
+    db = await db_manager.get_db()
+    calendar = await db.linkedin_calendar.find().sort("day", 1).to_list(100)
+    for p in calendar:
+        p["_id"] = str(p["_id"])
+    return calendar
+
 app.include_router(api_router)
 
 app.add_middleware(
