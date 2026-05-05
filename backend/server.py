@@ -41,11 +41,17 @@ async def startup_event():
     scheduler.add_job(publish_daily_post, 'cron', hour=9, minute=0, args=[0])
     # 2:00 PM - Commercial
     scheduler.add_job(publish_daily_post, 'cron', hour=14, minute=0, args=[1])
-    # 7:00 PM - Tip
-    scheduler.add_job(publish_daily_post, 'cron', hour=19, minute=0, args=[2])
+    # 9:00 PM - Tip (Estrategia Nocturna CDMX)
+    scheduler.add_job(publish_daily_post, 'cron', hour=21, minute=0, args=[2])
     
     scheduler.start()
-    logger.info("📅 APScheduler iniciado: 3 posts diarios configurados.")
+    logger.info("📅 APScheduler iniciado: Posts a las 9am, 2pm y 9pm.")
+
+@api_router.post("/social/post-now")
+async def post_social_now(post_type: int = 2):
+    """Dispara una publicación en Threads inmediatamente"""
+    result = await publish_daily_post(post_type)
+    return result
 
 @app.on_event("shutdown")
 async def shutdown_event():

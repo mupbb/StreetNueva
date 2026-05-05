@@ -4,7 +4,7 @@ import axios from 'axios';
 const API_URL = "https://alberto-social-v2.onrender.com/api";
 
 export default function AdminDashboard() {
-    const [activeTab, setActiveTab] = useState('whatsapp'); // 'whatsapp' o 'linkedin'
+    const [activeTab, setActiveTab] = useState('whatsapp'); // 'whatsapp', 'linkedin', 'threads'
     const [leads, setLeads] = useState([]);
     const [selectedPhone, setSelectedPhone] = useState(null);
     const [messages, setMessages] = useState([]);
@@ -17,7 +17,7 @@ export default function AdminDashboard() {
             fetchLeads();
             const interval = setInterval(fetchLeads, 30000);
             return () => clearInterval(interval);
-        } else {
+        } else if (activeTab === 'linkedin') {
             fetchLinkedinData();
         }
     }, [activeTab]);
@@ -55,14 +55,15 @@ export default function AdminDashboard() {
         } catch (err) { console.error(err); }
     };
 
-    const handlePostNow = async () => {
-        if (!window.confirm("¿Seguro que quieres publicar esto en LinkedIn ahora mismo?")) return;
+    const handlePostNow = async (agent) => {
+        const endpoint = agent === 'lucero' ? '/linkedin/post-now' : '/social/post-now';
+        if (!window.confirm(`¿Seguro que quieres publicar en ${agent === 'lucero' ? 'LinkedIn' : 'Threads'} ahora mismo?`)) return;
         try {
-            const res = await axios.post(`${API_URL}/linkedin/post-now`);
-            if (res.data.success) {
+            const res = await axios.post(`${API_URL}${endpoint}`);
+            if (res.data.success || !res.data.error) {
                 alert("🚀 ¡Publicado con éxito!");
             } else {
-                alert("❌ Error: " + res.data.error);
+                alert("❌ Error: " + (res.data.error || "Fallo en la API"));
             }
         } catch (err) { alert("Error de conexión"); }
     };
@@ -73,15 +74,21 @@ export default function AdminDashboard() {
             <div style={{ width: '80px', background: '#000', display: 'flex', flexDirection: 'column', alignItems: 'center', py: '20px', borderRight: '1px solid #222' }}>
                 <div 
                     onClick={() => setActiveTab('whatsapp')}
-                    style={{ padding: '15px', cursor: 'pointer', opacity: activeTab === 'whatsapp' ? 1 : 0.4, transition: '0.3s' }}
+                    style={{ padding: '20px', cursor: 'pointer', opacity: activeTab === 'whatsapp' ? 1 : 0.4, transition: '0.3s', fontSize: '1.5rem' }}
                 >
                     📱
                 </div>
                 <div 
                     onClick={() => setActiveTab('linkedin')}
-                    style={{ padding: '15px', cursor: 'pointer', opacity: activeTab === 'linkedin' ? 1 : 0.4, transition: '0.3s' }}
+                    style={{ padding: '20px', cursor: 'pointer', opacity: activeTab === 'linkedin' ? 1 : 0.4, transition: '0.3s', fontSize: '1.5rem' }}
                 >
                     💼
+                </div>
+                <div 
+                    onClick={() => setActiveTab('threads')}
+                    style={{ padding: '20px', cursor: 'pointer', opacity: activeTab === 'threads' ? 1 : 0.4, transition: '0.3s', fontSize: '1.5rem' }}
+                >
+                    🧵
                 </div>
             </div>
 
@@ -122,7 +129,7 @@ export default function AdminDashboard() {
                         ) : <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333' }}><h3>Selecciona un chat</h3></div>}
                     </div>
                 </>
-            ) : (
+            ) : activeTab === 'linkedin' ? (
                 <div style={{ flex: 1, overflowY: 'auto', padding: '40px', background: '#0a0a0a' }}>
                     <h1 style={{ color: '#ffd700', marginBottom: '10px' }}>Lucero (LinkedIn)</h1>
                     <p style={{ color: '#888', marginBottom: '30px' }}>Estrategia de 30 Días - Street Prime Detail</p>
@@ -137,29 +144,29 @@ export default function AdminDashboard() {
                                 border: '1px solid #222'
                             }}>{linkedinToday.content}</pre>
                             <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                                <button style={{ 
-                                    background: '#ffd700', color: '#000', border: 'none', 
-                                    padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold',
-                                    cursor: 'pointer'
-                                }} onClick={() => navigator.clipboard.writeText(linkedinToday.content)}>Copiar Contenido</button>
-                                
-                                <button style={{ 
-                                    background: '#0077b5', color: '#fff', border: 'none', 
-                                    padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold',
-                                    cursor: 'pointer'
-                                }} onClick={handlePostNow}>🚀 Publicar en LinkedIn</button>
+                                <button style={{ background: '#ffd700', color: '#000', border: 'none', padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => navigator.clipboard.writeText(linkedinToday.content)}>Copiar Contenido</button>
+                                <button style={{ background: '#0077b5', color: '#fff', border: 'none', padding: '12px 25px', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer' }} onClick={() => handlePostNow('lucero')}>🚀 Publicar en LinkedIn</button>
                             </div>
                         </div>
                     )}
-
-                    <h3 style={{ borderBottom: '1px solid #222', paddingBottom: '10px' }}>Calendario Editorial</h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '15px', marginTop: '20px' }}>
-                        {linkedinCalendar.map(p => (
-                            <div key={p.day} style={{ background: '#111', padding: '15px', borderRadius: '10px', border: '1px solid #222' }}>
-                                <div style={{ color: '#ffd700', fontWeight: 'bold' }}>Día {p.day}</div>
-                                <div style={{ fontSize: '0.8rem', color: '#888' }}>{p.type}</div>
-                            </div>
-                        ))}
+                </div>
+            ) : (
+                <div style={{ flex: 1, overflowY: 'auto', padding: '40px', background: '#0a0a0a' }}>
+                    <h1 style={{ color: '#ffd700', marginBottom: '10px' }}>Threads Agent</h1>
+                    <p style={{ color: '#888', marginBottom: '30px' }}>Automatización de Contenido Diario</p>
+                    
+                    <div style={{ background: '#111', padding: '40px', borderRadius: '20px', border: '1px solid #333', textAlign: 'center' }}>
+                        <div style={{ fontSize: '3rem', marginBottom: '20px' }}>🧵</div>
+                        <h2>Publicación Nocturna (9:00 PM)</h2>
+                        <p style={{ color: '#888', maxWidth: '500px', margin: '0 auto 30px' }}>
+                            El agente generará automáticamente un "Tip del Día" enfocado en el clima de CDMX y el cuidado premium.
+                        </p>
+                        <button 
+                            style={{ background: '#fff', color: '#000', border: 'none', padding: '15px 40px', borderRadius: '12px', fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer' }}
+                            onClick={() => handlePostNow('threads')}
+                        >
+                            🚀 Publicar en Threads AHORA
+                        </button>
                     </div>
                 </div>
             )}
